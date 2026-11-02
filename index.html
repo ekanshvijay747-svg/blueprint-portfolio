@@ -1,0 +1,4594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ekansh's Life — Blueprint Schematic 3D Cinematic Portfolio</title>
+
+  <!-- Typography: JetBrains Mono & Space Grotesk -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&family=Space+Grotesk:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Core Libraries via CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <style>
+    :root {
+      --bg-blueprint-dark: #030c17;
+      --bg-blueprint-navy: #051626;
+      --bg-blueprint-mid: #0a2540;
+      --cyan-laser: #00f0ff;
+      --cyan-bright: #67e8f9;
+      --amber-warm: #f59e0b;
+      --amber-bright: #fbbf24;
+      --cad-white: #ffffff;
+      --cad-dim-text: rgba(147, 197, 253, 0.75);
+      --cad-border: rgba(0, 240, 255, 0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-blueprint-dark);
+      color: #e0f2fe;
+      font-family: 'JetBrains Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+      user-select: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+    }
+
+    .cinema-wrapper {
+      width: 100%;
+      max-width: 1420px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Top Telemetry Info Header */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 18px;
+      background: rgba(5, 22, 38, 0.88);
+      border: 1px solid var(--cad-border);
+      border-radius: 8px;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: var(--cad-dim-text);
+      backdrop-filter: blur(10px);
+    }
+
+    .top-bar-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      color: var(--cyan-laser);
+    }
+
+    .top-bar-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cyan-laser);
+      box-shadow: 0 0 10px var(--cyan-laser);
+      animation: pulseDot 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 0.4; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 15px var(--cyan-laser); }
+    }
+
+    .top-bar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .top-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      border-radius: 5px;
+      color: #ffffff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .top-btn:hover {
+      background: rgba(0, 240, 255, 0.25);
+      border-color: var(--cyan-laser);
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .audio-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(147, 197, 253, 0.4);
+      box-shadow: none;
+      transition: all 0.3s ease;
+      display: inline-block;
+    }
+    .audio-status-dot.active {
+      background: var(--cyan-laser);
+      box-shadow: 0 0 8px var(--cyan-laser);
+      animation: pulseDot 1.8s infinite ease-in-out;
+    }
+
+    .audio-gesture-hint {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 60;
+      display: none;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 18px;
+      background: rgba(3, 12, 23, 0.92);
+      border: 1px solid var(--cyan-laser);
+      border-radius: 4px;
+      color: var(--cyan-laser);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1.2px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.4), inset 0 0 10px rgba(0, 240, 255, 0.15);
+      animation: pulseHint 2s infinite ease-in-out;
+      transition: all 0.3s ease;
+      pointer-events: auto;
+    }
+    .audio-gesture-hint:hover {
+      background: rgba(0, 240, 255, 0.2);
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.7);
+      transform: translateX(-50%) translateY(-1px);
+    }
+    @keyframes pulseHint {
+      0%, 100% { opacity: 0.85; transform: translateX(-50%) scale(1); }
+      50% { opacity: 1; transform: translateX(-50%) scale(1.02); box-shadow: 0 0 25px rgba(0, 240, 255, 0.65); }
+    }
+
+    /* 16:9 Cinema Viewport */
+    .viewport-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: radial-gradient(circle at 50% 50%, #0a2d4d 0%, #061829 65%, #020b14 100%);
+      border: 1.5px solid var(--cad-border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85), 0 0 45px rgba(0, 240, 255, 0.18);
+    }
+
+    /* Fullscreen Mode */
+    .viewport-container:fullscreen,
+    .viewport-container:-webkit-full-screen {
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: none !important;
+      aspect-ratio: auto !important;
+      border-radius: 0 !important;
+      border: none !important;
+      background: #030c17 !important;
+    }
+
+    #webglCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 1;
+    }
+
+    #hudCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .crt-vignette-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+      background: 
+        radial-gradient(ellipse at center, transparent 55%, rgba(2, 11, 20, 0.85) 100%),
+        repeating-linear-gradient(0deg, rgba(0, 240, 255, 0.02) 0px, rgba(0, 240, 255, 0.02) 1px, transparent 1px, transparent 3px);
+      mix-blend-mode: screen;
+    }
+
+    /* Corner CAD Brackets */
+    .corner-bracket {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border-color: rgba(0, 240, 255, 0.65);
+      pointer-events: none;
+      z-index: 12;
+    }
+    .corner-tl { top: 16px; left: 16px; border-top: 2px solid; border-left: 2px solid; }
+    .corner-tr { top: 16px; right: 16px; border-top: 2px solid; border-right: 2px solid; }
+    .corner-bl { bottom: 16px; left: 16px; border-bottom: 2px solid; border-left: 2px solid; }
+    .corner-br { bottom: 16px; right: 16px; border-bottom: 2px solid; border-right: 2px solid; }
+
+    /* ==========================================================================
+       INTRO SCREEN LAYER (Centered Title & Decryption)
+       ========================================================================== */
+    .intro-screen-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .intro-screen-layer.hidden {
+      opacity: 0;
+      transform: scale(0.92);
+      pointer-events: none;
+    }
+
+    .intro-telemetry {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+    }
+
+    .telemetry-line {
+      color: rgba(140, 215, 255, 0.8);
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: all 0.3s ease;
+    }
+    .telemetry-line.active {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .coordinate-ticker-block {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      text-align: right;
+      font-size: 11px;
+      color: rgba(140, 215, 255, 0.85);
+      background: rgba(5, 22, 38, 0.7);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      padding: 8px 14px;
+      border-radius: 6px;
+      backdrop-filter: blur(6px);
+    }
+
+    .ticker-row {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-bottom: 2px;
+    }
+    .ticker-val {
+      color: var(--cyan-laser);
+      font-weight: 700;
+      min-width: 65px;
+      text-align: right;
+    }
+
+    /* ==========================================================================
+       INTRO CALIBRATION HUD (Visible DURING initial schematic animation)
+       ========================================================================== */
+    .intro-calibration-hud {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 21;
+      opacity: 1;
+      transform: scale(1);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .intro-calibration-hud.hidden {
+      opacity: 0;
+      transform: scale(1.15);
+      pointer-events: none;
+    }
+
+    .cal-caliper-ring {
+      width: 140px;
+      height: 140px;
+      border: 1.5px dashed rgba(0, 240, 255, 0.45);
+      border-radius: 50%;
+      position: relative;
+      margin-bottom: 20px;
+      animation: spinCaliper 16s linear infinite;
+    }
+
+    @keyframes spinCaliper {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .caliper-tick {
+      position: absolute;
+      background: var(--cyan-laser);
+      box-shadow: 0 0 8px var(--cyan-laser);
+    }
+    .caliper-top { top: -6px; left: 50%; width: 2px; height: 12px; transform: translateX(-50%); }
+    .caliper-bottom { bottom: -6px; left: 50%; width: 2px; height: 12px; transform: translateX(-50%); }
+    .caliper-left { left: -6px; top: 50%; width: 12px; height: 2px; transform: translateY(-50%); }
+    .caliper-right { right: -6px; top: 50%; width: 12px; height: 2px; transform: translateY(-50%); }
+
+    .cal-status-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      color: var(--cyan-bright);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+    }
+
+    .cal-progress-track {
+      width: 280px;
+      height: 4px;
+      background: rgba(0, 240, 255, 0.15);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .cal-progress-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #0284c7, #00f0ff);
+      box-shadow: 0 0 10px #00f0ff;
+      transition: width 0.1s linear;
+    }
+
+    .cal-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 280px;
+      font-size: 10px;
+      color: rgba(140, 215, 255, 0.75);
+      letter-spacing: 0.1em;
+    }
+
+    #calStatusBadge {
+      color: var(--amber-warm);
+      font-weight: 700;
+    }
+
+    /* ==========================================================================
+       CAD TITLE FRAME (Hidden initially; revealed ONLY AFTER animation)
+       ========================================================================== */
+    .cad-title-frame {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 24px 44px;
+      position: relative;
+      opacity: 0;
+      transform: scale(0.92);
+      pointer-events: none;
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 22;
+    }
+
+    .cad-title-frame.active {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto;
+    }
+
+    .title-lock-badge {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      color: var(--amber-bright);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      text-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: all 0.5s ease;
+    }
+    .title-lock-badge.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hero-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(38px, 6vw, 80px);
+      font-weight: 900;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #ffffff;
+      line-height: 1.05;
+      margin-bottom: 12px;
+      min-height: 1.1em;
+      text-shadow: 
+        0 0 12px rgba(0, 240, 255, 0.85),
+        0 0 30px rgba(0, 240, 255, 0.55),
+        0 0 60px rgba(0, 240, 255, 0.35);
+      filter: drop-shadow(0 0 16px rgba(0, 240, 255, 0.45));
+    }
+
+    .hero-divider-rule {
+      width: 0%;
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent, #00f0ff 25%, #ffffff 50%, #00f0ff 75%, transparent);
+      box-shadow: 0 0 10px #00f0ff;
+      margin-bottom: 14px;
+      transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .hero-divider-rule.expanded {
+      width: 85%;
+    }
+
+    .hero-subtitle {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(12px, 1.4vw, 16px);
+      font-weight: 600;
+      letter-spacing: 0.38em;
+      color: var(--cyan-bright);
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translateY(6px);
+      text-shadow: 0 0 12px rgba(0, 240, 255, 0.7);
+      margin-bottom: 16px;
+      transition: all 0.6s ease;
+    }
+    .hero-subtitle.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hero-specs-pill {
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(140, 220, 255, 0.85);
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.28);
+      border-radius: 4px;
+      padding: 5px 14px;
+      letter-spacing: 0.12em;
+      margin-bottom: 24px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.5s ease;
+    }
+    .hero-specs-pill.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Sleek Technical Button: "VIEW BLUEPRINT [→]" */
+    .blueprint-btn-container {
+      pointer-events: auto;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .blueprint-btn-container.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .view-blueprint-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      padding: 13px 32px;
+      background: rgba(10, 38, 64, 0.85);
+      border: 1.5px solid rgba(255, 255, 255, 0.95);
+      border-radius: 8px;
+      color: #ffffff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13.5px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.4), inset 0 0 16px rgba(0, 240, 255, 0.2);
+      backdrop-filter: blur(10px);
+      transition: all 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .view-blueprint-btn:hover {
+      background: rgba(0, 240, 255, 0.25);
+      border-color: #ffffff;
+      box-shadow: 0 0 40px rgba(0, 240, 255, 0.8), inset 0 0 25px rgba(255, 255, 255, 0.35);
+      transform: scale(1.05);
+      color: #ffffff;
+    }
+
+    .view-blueprint-btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-bracket {
+      color: var(--cyan-laser);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+    }
+
+    .btn-arrow {
+      font-size: 16px;
+      color: var(--cyan-laser);
+      filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.8));
+      transition: transform 0.3s ease;
+    }
+    .view-blueprint-btn:hover .btn-arrow {
+      transform: translateX(4px);
+    }
+
+    /* ==========================================================================
+       MASTER BLUEPRINT VIEW LAYER (Appears on clicking "VIEW BLUEPRINT")
+       ========================================================================== */
+    .blueprint-master-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 25;
+      padding: 22px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(1.04);
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .blueprint-master-layer.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+
+    /* Blueprint Top Navigation & Status Bar */
+    .blueprint-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(5, 24, 42, 0.85);
+      border: 1px solid var(--cad-border);
+      padding: 10px 18px;
+      border-radius: 8px;
+      backdrop-filter: blur(10px);
+    }
+
+    .blueprint-title-tag {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.14em;
+    }
+
+    /* 5 Interactive Broad Event Blueprint Boxes Grid */
+    .blueprint-boxes-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      margin: auto 0;
+      width: 100%;
+    }
+
+    .blueprint-module-box {
+      background: rgba(5, 24, 42, 0.82);
+      border: 1.5px solid rgba(0, 240, 255, 0.35);
+      border-radius: 8px;
+      padding: 18px 16px;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 230px;
+      transition: all 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .blueprint-module-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--cyan-laser);
+      opacity: 0.4;
+      transition: all 0.3s ease;
+    }
+
+    .blueprint-module-box:hover {
+      border-color: var(--cyan-laser);
+      background: rgba(8, 36, 62, 0.95);
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 240, 255, 0.3);
+    }
+
+    .blueprint-module-box:hover::before {
+      opacity: 1;
+      box-shadow: 0 0 12px var(--cyan-laser);
+    }
+
+    .box-code {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--amber-bright);
+      letter-spacing: 0.15em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .box-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: rgba(0, 240, 255, 0.75);
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      border-radius: 4px;
+      padding: 1px 6px;
+      letter-spacing: 0.1em;
+    }
+
+    .box-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.25;
+      margin-bottom: 8px;
+      letter-spacing: 0.05em;
+    }
+
+    .box-summary {
+      font-size: 11px;
+      line-height: 1.5;
+      color: rgba(200, 230, 255, 0.75);
+      margin-bottom: 12px;
+      flex-grow: 1;
+    }
+
+    .box-metric {
+      font-size: 9.5px;
+      color: var(--cyan-bright);
+      background: rgba(0, 240, 255, 0.1);
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      margin-bottom: 12px;
+      letter-spacing: 0.08em;
+    }
+
+    .box-cta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--cyan-laser);
+      border-top: 1px solid rgba(0, 240, 255, 0.2);
+      padding-top: 8px;
+      letter-spacing: 0.1em;
+    }
+
+    .box-arrow {
+      transition: transform 0.25s ease;
+    }
+    .blueprint-module-box:hover .box-arrow {
+      transform: translateX(4px);
+    }
+
+    /* Master Bottom Bar */
+    .blueprint-footer-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: rgba(140, 215, 255, 0.7);
+    }
+
+    /* ==========================================================================
+       DEEP DIVE DETAIL INSPECTION MODAL (When a Box is clicked)
+       ========================================================================== */
+    /* ==========================================================================
+       DEEP DIVE DETAIL INSPECTION HUD (Blended Side Panel, Non-Blocking)
+       ========================================================================== */
+    /* ==========================================================================
+       DEEP DIVE DETAIL INSPECTION LAYER (IOS 26 LIQUID GLASS ARCHITECTURE)
+       ========================================================================== */
+    .module-detail-modal {
+      position: absolute;
+      top: 14px;
+      bottom: 14px;
+      left: 18px;
+      right: 18px;
+      z-index: 35;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.97);
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .module-detail-modal.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Solid CAD Top Header Bar (No Liquid Glass) */
+    .liquid-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #061525;
+      border: 1px solid rgba(0, 240, 255, 0.28);
+      border-radius: 12px;
+      padding: 10px 18px;
+      margin-bottom: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      pointer-events: auto;
+    }
+
+    .liquid-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .liquid-pulsing-node {
+      width: 10px;
+      height: 10px;
+      background: var(--cyan-laser);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--cyan-laser);
+      animation: pulseNode 1.8s infinite ease-in-out;
+    }
+
+    @keyframes pulseNode {
+      0%, 100% { transform: scale(1); opacity: 0.85; }
+      50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 20px var(--cyan-laser); }
+    }
+
+    .liquid-tag {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--amber-bright);
+      letter-spacing: 0.16em;
+      margin-bottom: 2px;
+    }
+
+    .liquid-heading {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(16px, 1.8vw, 22px);
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+      text-shadow: 0 0 14px rgba(0, 240, 255, 0.45);
+    }
+
+    .liquid-header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .liquid-nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      padding: 3px 6px;
+    }
+
+    .liquid-counter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      font-weight: 600;
+      color: rgba(180, 230, 255, 0.85);
+      letter-spacing: 0.12em;
+      padding: 0 8px;
+    }
+
+    .liquid-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: #0a2034;
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      border-radius: 8px;
+      color: #ffffff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .liquid-btn:hover {
+      background: #0f3354;
+      border-color: var(--cyan-laser);
+      transform: translateY(-1px);
+    }
+
+    .liquid-btn-primary {
+      background: #0c2d4a;
+      border-color: var(--cyan-laser);
+    }
+
+    .liquid-btn-sm {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 6px;
+      color: rgba(200, 235, 255, 0.9);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .liquid-btn-sm:hover {
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+      border-color: var(--cyan-laser);
+    }
+
+    /* ==========================================================================
+       SEPARATE SUBJECT BOXES (Like the first screen's interactive boxes!)
+       ========================================================================== */
+    .subject-boxes-container {
+      width: 100%;
+      margin-bottom: 12px;
+      pointer-events: auto;
+    }
+
+    .subject-boxes-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      color: rgba(140, 220, 255, 0.85);
+      margin-bottom: 8px;
+      padding: 0 4px;
+    }
+
+    .mindmap-breadcrumb {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+    }
+
+    .breadcrumb-root {
+      color: rgba(140, 220, 255, 0.6);
+    }
+
+    .breadcrumb-arrow {
+      color: var(--cyan-laser);
+      font-size: 8px;
+    }
+
+    .breadcrumb-module {
+      color: var(--amber-bright);
+    }
+
+    .breadcrumb-depth-badge {
+      background: rgba(0, 240, 255, 0.14);
+      border: 1px solid rgba(0, 240, 255, 0.45);
+      color: #ffffff;
+      padding: 2px 8px;
+      border-radius: 4px;
+      text-shadow: 0 0 8px rgba(0, 240, 255, 0.7);
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+      transition: all 0.35s ease;
+    }
+
+    .depth-pip-meter {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      margin-left: 4px;
+    }
+
+    .depth-pip {
+      width: 5px;
+      height: 5px;
+      border-radius: 1px;
+      background: rgba(0, 240, 255, 0.15);
+      border: 0.5px solid rgba(0, 240, 255, 0.35);
+      transition: all 0.3s ease;
+    }
+
+    .depth-pip.active {
+      background: var(--cyan-laser);
+      box-shadow: 0 0 6px var(--cyan-laser);
+    }
+
+    @keyframes tabDivingPulse {
+      0% {
+        border-color: #00f0ff;
+        background: #0d2c4a;
+      }
+      100% {
+        border-color: #ffffff;
+        background: #11385d;
+      }
+    }
+
+    .liquid-subject-box.diving-pulse {
+      border-color: #00f0ff !important;
+      background: #0d2c4a !important;
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.3) !important;
+    }
+
+    .transition-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #061525;
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 9.5px;
+      color: var(--cyan-laser);
+      letter-spacing: 0.1em;
+    }
+
+    .transition-status-pill .status-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--cyan-laser);
+      border-radius: 50%;
+      box-shadow: 0 0 6px var(--cyan-laser);
+    }
+
+    .subject-boxes-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      width: 100%;
+    }
+
+    .liquid-subject-box {
+      background: #07192b;
+      border: 1px solid rgba(0, 240, 255, 0.22);
+      border-radius: 12px;
+      padding: 12px 14px;
+      cursor: pointer;
+      position: relative;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 88px;
+    }
+
+    .liquid-subject-box:hover {
+      transform: translateY(-2px);
+      border-color: rgba(0, 240, 255, 0.65);
+      background: #0a233b;
+    }
+
+    .liquid-subject-box.active-box {
+      border: 1.5px solid var(--cyan-laser);
+      background: #0d2c4a;
+      box-shadow: 0 0 16px rgba(0, 240, 255, 0.25);
+    }
+
+    .subj-box-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .subj-box-code {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--amber-bright);
+      letter-spacing: 0.14em;
+    }
+
+    .subj-box-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.2;
+      letter-spacing: 0.03em;
+      margin-bottom: 6px;
+    }
+
+    .subj-box-cue {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 9.5px;
+      font-weight: 600;
+      color: rgba(140, 220, 255, 0.75);
+      letter-spacing: 0.08em;
+    }
+
+    .liquid-subject-box.active-box .subj-box-cue {
+      color: var(--cyan-laser);
+      font-weight: 700;
+    }
+
+    /* ==========================================================================
+       SOLID CAD BULLET POINTS CONTAINER (Opaque, High-Contrast, Zero Text Obstruction)
+       ========================================================================== */
+    .liquid-bullet-panel {
+      width: min(540px, 52vw);
+      max-height: calc(100% - 195px);
+      background: #051424;
+      border: 1px solid rgba(0, 240, 255, 0.32);
+      border-radius: 14px;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.85);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      pointer-events: auto;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .bullet-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+    }
+
+    .bullet-panel-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 0.05em;
+    }
+
+    .bullet-panel-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--amber-warm);
+      letter-spacing: 0.1em;
+    }
+
+    .bullet-count-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--cyan-laser);
+      background: rgba(0, 240, 255, 0.15);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      border-radius: 4px;
+      padding: 2px 7px;
+      letter-spacing: 0.1em;
+    }
+
+    .notes-content-container {
+      flex-grow: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-right: 4px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 240, 255, 0.4) transparent;
+    }
+
+    .notes-content-container::-webkit-scrollbar {
+      width: 4px;
+    }
+    .notes-content-container::-webkit-scrollbar-thumb {
+      background: rgba(0, 240, 255, 0.4);
+      border-radius: 4px;
+    }
+
+    .note-card {
+      background: #092036;
+      border: 1px solid rgba(0, 240, 255, 0.18);
+      border-left: 3.5px solid var(--cyan-laser);
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .note-card:hover {
+      background: #0d2945;
+      border-color: rgba(0, 240, 255, 0.4);
+      border-left-color: var(--amber-warm);
+      transform: translateX(3px);
+    }
+
+    .note-header {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 4px;
+    }
+
+    .note-bullet {
+      color: var(--cyan-laser);
+      font-size: 11px;
+    }
+
+    .note-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.03em;
+    }
+
+    .note-desc {
+      font-size: 11px;
+      line-height: 1.55;
+      color: #d6eaff;
+      padding-left: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .subject-boxes-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .liquid-bullet-panel {
+        width: 100%;
+      }
+      .blueprint-boxes-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 680px) {
+      .subject-boxes-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .blueprint-boxes-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cinema-wrapper">
+    <!-- Header Bar -->
+    <div class="top-bar">
+      <div class="top-bar-badge">
+        <span class="top-bar-dot"></span>
+        <span id="headerTitle">EKANSH'S LIFE // 3D BLUEPRINT SCHEMATIC PORTFOLIO</span>
+      </div>
+
+      <div class="top-bar-actions">
+        <button class="top-btn" id="audioToggleBtn" title="Toggle Procedural Audio FX (Click anywhere to activate)">
+          <span class="audio-status-dot active" id="audioDot"></span>
+          <span id="audioLabel">AUDIO: ON</span>
+        </button>
+        <button class="top-btn" id="replayIntroBtn" title="Replay Cinematic Intro">
+          <span>↺</span>
+          <span>REPLAY INTRO</span>
+        </button>
+        <button class="top-btn" id="fullscreenBtn" title="Toggle Fullscreen (Key: F)">
+          <span>&#x26F6;</span>
+          <span>FULLSCREEN</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 16:9 Responsive Cinema Viewport -->
+    <div class="viewport-container" id="viewport">
+      <!-- Three.js WebGL Canvas for 3D Geometry -->
+      <canvas id="webglCanvas"></canvas>
+
+      <!-- 2D HUD Canvas for dynamic CAD lines & drafting vectors -->
+      <canvas id="hudCanvas"></canvas>
+
+      <!-- CRT Scanline & Film Vignette Overlay -->
+      <div class="crt-vignette-overlay"></div>
+
+      <!-- Corner CAD Brackets -->
+      <div class="corner-bracket corner-tl"></div>
+      <div class="corner-bracket corner-tr"></div>
+      <div class="corner-bracket corner-bl"></div>
+      <div class="corner-bracket corner-br"></div>
+
+      <!-- Browser Autoplay Unlock Hint (Visible ONLY if browser initially suspends audio) -->
+      <div class="audio-gesture-hint" id="audioGestureHint" title="Click anywhere to engage audio">
+        <span class="audio-status-dot active"></span>
+        <span>CLICK ANYWHERE TO ENGAGE CAD AUDIO</span>
+      </div>
+
+      <!-- ======================================================================
+           1. CINEMATIC INTRO SCREEN LAYER
+           ====================================================================== -->
+      <div class="intro-screen-layer" id="introScreenLayer">
+        <!-- Telemetry Stream -->
+        <div class="intro-telemetry">
+          <div class="telemetry-line" id="tel1">&gt; INITIALIZING SYSTEM KERNEL... <span style="color:var(--cyan-laser); font-weight:700;">[OK]</span></div>
+          <div class="telemetry-line" id="tel2">&gt; CALIBRATING CAD SCHEMATIC [V5.0]... <span style="color:var(--cyan-laser); font-weight:700;">[CALIBRATED]</span></div>
+          <div class="telemetry-line" id="tel3">&gt; MAPPING 3D GIMBAL LATTICE... <span style="color:var(--cyan-laser); font-weight:700;">[LOCKED]</span></div>
+          <div class="telemetry-line" id="tel4">&gt; TARGET TOPOLOGY SCAN: <span style="color:var(--cyan-laser); font-weight:700;">100% ONLINE</span></div>
+        </div>
+
+        <!-- Coordinate Tickers -->
+        <div class="coordinate-ticker-block">
+          <div class="ticker-row"><span>ROT_X:</span><span class="ticker-val" id="rotXVal">+000.0°</span></div>
+          <div class="ticker-row"><span>ROT_Y:</span><span class="ticker-val" id="rotYVal">+000.0°</span></div>
+          <div class="ticker-row"><span>ROT_Z:</span><span class="ticker-val" id="rotZVal">+000.0°</span></div>
+          <div class="ticker-row"><span>CAM_Z:</span><span class="ticker-val" id="camZVal">420.0</span></div>
+          <div class="ticker-row"><span>PITCH:</span><span class="ticker-val" id="pitchVal">0.00°</span></div>
+        </div>
+
+        <!-- Central Calibration Reticle HUD (Active during the animation, before Ekansh's Life reveals) -->
+        <div class="intro-calibration-hud" id="introCalibrationHud">
+          <div class="cal-caliper-ring">
+            <div class="caliper-tick caliper-top"></div>
+            <div class="caliper-tick caliper-bottom"></div>
+            <div class="caliper-tick caliper-left"></div>
+            <div class="caliper-tick caliper-right"></div>
+          </div>
+          <div class="cal-status-label" id="calStatusLabel">CAD SCHEMATIC CALIBRATION IN PROGRESS</div>
+          <div class="cal-progress-track">
+            <div class="cal-progress-bar" id="calProgressBar"></div>
+          </div>
+          <div class="cal-meta-row">
+            <span id="calPercentVal">0%</span>
+            <span>ISO 128 / LAT 37.77° N</span>
+            <span id="calStatusBadge">INITIALIZING</span>
+          </div>
+        </div>
+
+        <!-- Center Typography Decryption & Sleek Button (Reveals ONLY AFTER animation) -->
+        <div class="cad-title-frame" id="cadTitleFrame">
+          <div class="title-lock-badge" id="titleLockBadge">◈ ARCHITECTURAL SPECIFICATION // IDENTITY ARCHIVE ◈</div>
+          <h1 class="hero-title" id="heroTitle"></h1>
+          <div class="hero-divider-rule" id="heroDividerRule"></div>
+          <div class="hero-subtitle" id="heroSubtitle"></div>
+          <div class="hero-specs-pill" id="heroSpecsPill">[ FIRST-PRINCIPLES LOGIC &bull; AUTONOMOUS SYSTEMS &bull; HARDWARE FORGE ]</div>
+
+          <!-- Sleek Technical Button: "VIEW BLUEPRINT [→]" -->
+          <div class="blueprint-btn-container" id="blueprintBtnContainer">
+            <button class="view-blueprint-btn" id="viewBlueprintBtn" aria-label="View Blueprint">
+              <span class="btn-bracket">[</span>
+              <span>VIEW BLUEPRINT</span>
+              <span class="btn-arrow">&rarr;</span>
+              <span class="btn-bracket">]</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================================
+           2. MASTER BLUEPRINT VIEW LAYER (Revealed upon clicking "VIEW BLUEPRINT")
+           Multiple Broad Event Blueprint Boxes
+           ====================================================================== -->
+      <div class="blueprint-master-layer" id="blueprintMasterLayer">
+        <!-- Blueprint Header -->
+        <div class="blueprint-header-bar">
+          <div class="blueprint-title-tag">
+            <div style="width: 8px; height: 8px; background: var(--cyan-laser); border-radius: 2px; box-shadow: 0 0 10px var(--cyan-laser);"></div>
+            <span>MASTER BLUEPRINT SCHEMATIC // SELECT AN EVENT MODULE TO EXPLORE</span>
+          </div>
+          <button class="top-btn" id="backToIntroBtn">
+            <span>&larr;</span>
+            <span>BACK TO TITLE</span>
+          </button>
+        </div>
+
+        <!-- 5 Interactive Broad Event Blueprint Boxes -->
+        <div class="blueprint-boxes-grid">
+          <!-- Box 1: Positive Characteristics & Qualities -->
+          <div class="blueprint-module-box" data-module="0">
+            <div class="box-code">
+              <span>[SEC-01] ATTRIBUTES</span>
+              <span class="box-num">01</span>
+            </div>
+            <div class="box-title">CORE CHARACTERISTICS</div>
+            <div class="box-summary">Goal-driven, hardworking, persistent in extreme high-stress situations, and creative world problem-solving.</div>
+            <div class="box-metric">DRIVE: HIGH RESILIENCE</div>
+            <div class="box-cta">
+              <span>INSPECT MODULE</span>
+              <span class="box-arrow">&rarr;</span>
+            </div>
+          </div>
+
+          <!-- Box 2: Interests, Activities & Qualities Brought -->
+          <div class="blueprint-module-box" data-module="1">
+            <div class="box-code">
+              <span>[SEC-02] PURSUITS</span>
+              <span class="box-num">02</span>
+            </div>
+            <div class="box-title">AREAS OF EXPLORATION</div>
+            <div class="box-summary">Robotics, Math Contests, Physics, Business, Networking, and fearless Public Speaking.</div>
+            <div class="box-metric">STAGE COMFORT: FEARLESS</div>
+            <div class="box-cta">
+              <span>INSPECT MODULE</span>
+              <span class="box-arrow">&rarr;</span>
+            </div>
+          </div>
+
+          <!-- Box 3: Strengths in Action (Case Study) -->
+          <div class="blueprint-module-box" data-module="2">
+            <div class="box-code">
+              <span>[SEC-03] STRENGTHS</span>
+              <span class="box-num">03</span>
+            </div>
+            <div class="box-title">STRENGTH IN ACTION</div>
+            <div class="box-summary">Social presentation: unscripted delivery, audience questions, creative humor, earning extending.</div>
+            <div class="box-metric">EVALUATION: EXTENDING</div>
+            <div class="box-cta">
+              <span>INSPECT MODULE</span>
+              <span class="box-arrow">&rarr;</span>
+            </div>
+          </div>
+
+          <!-- Box 4: Weakness & Evolution (Case Study) -->
+          <div class="blueprint-module-box" data-module="3">
+            <div class="box-code">
+              <span>[SEC-04] REFLECTION</span>
+              <span class="box-num">04</span>
+            </div>
+            <div class="box-title">WEAKNESS &amp; EVOLUTION</div>
+            <div class="box-summary">Overcoming self-doubt and shyness: pitching the Air Cadets utility app to commanding officers.</div>
+            <div class="box-metric">GROWTH: OVERCOMING SHYNESS</div>
+            <div class="box-cta">
+              <span>INSPECT MODULE</span>
+              <span class="box-arrow">&rarr;</span>
+            </div>
+          </div>
+
+          <!-- Box 5: Lessons, Personal Value & Carrying Forward -->
+          <div class="blueprint-module-box" data-module="4">
+            <div class="box-code">
+              <span>[SEC-05] FORWARD</span>
+              <span class="box-num">05</span>
+            </div>
+            <div class="box-title">LESSONS &amp; KNOWLEDGE</div>
+            <div class="box-summary">The power of networking for an introvert, and mastering time management across Pre-IB/PDP &amp; Cadets.</div>
+            <div class="box-metric">BALANCE: PRE-IB &amp; EXTRACURRICULARS</div>
+            <div class="box-cta">
+              <span>INSPECT MODULE</span>
+              <span class="box-arrow">&rarr;</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Master Footer -->
+        <div class="blueprint-footer-bar">
+          <div>SHEET: 01 / 01 &bull; SCALE: 1:1 METRIC &bull; ISO 128 CAD ARCHITECTURE</div>
+          <div style="color: var(--cyan-laser);">PROJ: EKANSH SPEC &bull; CLICK ANY MODULE FOR DEEP SCAN</div>
+        </div>
+      </div>
+
+      <!-- ======================================================================
+           3. DEEP DIVE DETAIL INSPECTION LAYER (IOS 26 LIQUID GLASS ARCHITECTURE)
+           ====================================================================== -->
+      <div class="module-detail-modal" id="moduleDetailModal">
+        <!-- Liquid Glass Floating Header -->
+        <div class="liquid-header-bar" id="liquidHeaderBar">
+          <div class="liquid-header-left">
+            <div class="liquid-pulsing-node"></div>
+            <div>
+              <div class="liquid-tag" id="modalModuleTag">[SEC-01] ATTRIBUTES</div>
+              <h2 class="liquid-heading" id="modalHeading">CORE CHARACTERISTICS</h2>
+            </div>
+          </div>
+
+          <div class="liquid-header-right">
+            <div class="liquid-nav-controls">
+              <button class="liquid-btn" id="prevModuleBtn" title="Previous Module">
+                <span>&larr; PREV</span>
+              </button>
+              <span class="liquid-counter" id="modalPageCounter">MODULE 01 / 05</span>
+              <button class="liquid-btn" id="nextModuleBtn" title="Next Module">
+                <span>NEXT &rarr;</span>
+              </button>
+            </div>
+            <button class="liquid-btn liquid-btn-primary" id="closeModalBtn" title="Return to Master Overview">
+              <span>&larr; MASTER BLUEPRINT</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- SEPARATE SUBJECT BOXES (Like the first screen's interactive boxes!) -->
+        <div class="subject-boxes-container" id="subjectBoxesContainer">
+          <div class="subject-boxes-header">
+            <div class="mindmap-breadcrumb">
+              <span class="breadcrumb-root">MINDMAP ROOT</span>
+              <span class="breadcrumb-arrow">❯</span>
+              <span class="breadcrumb-module" id="breadcrumbModule">[SEC-01]</span>
+              <span class="breadcrumb-arrow">❯</span>
+              <span class="breadcrumb-depth-badge" id="breadcrumbDepthBadge">DEPTH: LEVEL 01</span>
+            </div>
+            <div class="transition-status-pill" id="transitionStatusPill">
+              <span class="status-dot"></span>
+              <span id="transitionStatusText">READY // SELECT SUBJECT</span>
+            </div>
+          </div>
+          <!-- 4 Separate Liquid Glass Subject Boxes -->
+          <div class="subject-boxes-grid" id="subjectBoxesGrid">
+            <!-- Dynamically injected: .liquid-subject-box -->
+          </div>
+        </div>
+
+        <!-- LIQUID GLASS BULLET POINTS CONTAINER (Removed during transitions, reveals on complete!) -->
+        <div class="liquid-bullet-panel" id="liquidBulletPanel">
+          <div class="bullet-panel-header">
+            <div class="bullet-panel-title">
+              <span class="bullet-panel-tag">SPEC //</span>
+              <span id="bulletActiveIcon" style="display:none;"></span>
+              <span id="bulletActiveSubjectTitle">ACTIVE TOPIC POINTS</span>
+              <span class="bullet-count-badge" id="bulletCountBadge">3 POINTS</span>
+            </div>
+            <button class="liquid-btn-sm" id="dismissBulletBtn" title="Hide points to view 3D canvas">
+              <span>✕ HIDE POINTS</span>
+            </button>
+          </div>
+
+          <!-- Point Form Notes Container (Scrollable, Clean, Punchy) -->
+          <div class="notes-content-container" id="notesContentContainer">
+            <!-- Dynamically injected point form cards -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       EKANSH'S LIFE — CINEMATIC INTRO + INTERACTIVE BLUEPRINT ENGINE
+       Three.js + GSAP + Canvas 2D + Web Audio FX
+       ========================================================================== */
+
+    (function() {
+      // DOM Elements
+      const viewport = document.getElementById('viewport');
+      const webglCanvas = document.getElementById('webglCanvas');
+      const hudCanvas = document.getElementById('hudCanvas');
+      const hudCtx = hudCanvas.getContext('2d');
+
+      const introScreenLayer = document.getElementById('introScreenLayer');
+      const blueprintMasterLayer = document.getElementById('blueprintMasterLayer');
+      const moduleDetailModal = document.getElementById('moduleDetailModal');
+
+      const telLines = [
+        document.getElementById('tel1'),
+        document.getElementById('tel2'),
+        document.getElementById('tel3'),
+        document.getElementById('tel4')
+      ];
+
+      const rotXVal = document.getElementById('rotXVal');
+      const rotYVal = document.getElementById('rotYVal');
+      const rotZVal = document.getElementById('rotZVal');
+      const camZVal = document.getElementById('camZVal');
+      const pitchVal = document.getElementById('pitchVal');
+
+      const introCalibrationHud = document.getElementById('introCalibrationHud');
+      const calProgressBar = document.getElementById('calProgressBar');
+      const calPercentVal = document.getElementById('calPercentVal');
+      const calStatusLabel = document.getElementById('calStatusLabel');
+      const calStatusBadge = document.getElementById('calStatusBadge');
+
+      const cadTitleFrame = document.getElementById('cadTitleFrame');
+      const titleLockBadge = document.getElementById('titleLockBadge');
+      const heroTitle = document.getElementById('heroTitle');
+      const heroDividerRule = document.getElementById('heroDividerRule');
+      const heroSubtitle = document.getElementById('heroSubtitle');
+      const heroSpecsPill = document.getElementById('heroSpecsPill');
+      const blueprintBtnContainer = document.getElementById('blueprintBtnContainer');
+      const viewBlueprintBtn = document.getElementById('viewBlueprintBtn');
+      const backToIntroBtn = document.getElementById('backToIntroBtn');
+      const replayIntroBtn = document.getElementById('replayIntroBtn');
+      const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+      const audioToggleBtn = document.getElementById('audioToggleBtn');
+      const audioDot = document.getElementById('audioDot');
+      const audioLabel = document.getElementById('audioLabel');
+      const audioGestureHint = document.getElementById('audioGestureHint');
+
+      const moduleBoxes = document.querySelectorAll('.blueprint-module-box');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      const prevModuleBtn = document.getElementById('prevModuleBtn');
+      const nextModuleBtn = document.getElementById('nextModuleBtn');
+      const liquidHeaderBar = document.getElementById('liquidHeaderBar');
+      const subjectBoxesContainer = document.getElementById('subjectBoxesContainer');
+
+      const modalModuleTag = document.getElementById('modalModuleTag');
+      const modalHeading = document.getElementById('modalHeading');
+      const modalPageCounter = document.getElementById('modalPageCounter');
+      const subjectBoxesGrid = document.getElementById('subjectBoxesGrid');
+      const transitionStatusPill = document.getElementById('transitionStatusPill');
+      const transitionStatusText = document.getElementById('transitionStatusText');
+      const liquidBulletPanel = document.getElementById('liquidBulletPanel');
+      const bulletActiveIcon = document.getElementById('bulletActiveIcon');
+      const bulletActiveSubjectTitle = document.getElementById('bulletActiveSubjectTitle');
+      const bulletCountBadge = document.getElementById('bulletCountBadge');
+      const dismissBulletBtn = document.getElementById('dismissBulletBtn');
+      const breadcrumbModule = document.getElementById('breadcrumbModule');
+      const breadcrumbDepthBadge = document.getElementById('breadcrumbDepthBadge');
+
+      // 3D Mindmap Hierarchical Depth Offsets (Each topic delves visibly deeper along the branch!)
+      const MINDMAP_OFFSETS = [
+        { x: -50, y: -22, z: 70, label: "LEVEL 01" },
+        { x: 42, y: 38, z: 130, label: "LEVEL 02" },
+        { x: 68, y: -30, z: 190, label: "LEVEL 03" },
+        { x: -30, y: 52, z: 255, label: "LEVEL 04" }
+      ];
+
+      /* --------------------------------------------------------------------------
+         MODULE DATA (5 Broad Event Sections of Ekansh's Life - Structured into Broad Subjects)
+         -------------------------------------------------------------------------- */
+      const MODULE_DATA = [
+        {
+          id: 0,
+          tag: "[SEC-01] CORE ATTRIBUTES",
+          title: "POSITIVE CHARACTERISTICS",
+          subheading: "Qualities, Mindset & Stress Divergence",
+          subjects: [
+            {
+              id: "resilience",
+              name: "Pushing Through Extreme Stress",
+              points: [
+                { title: "Diverting Instinct Under Stress", desc: "Even though my natural instinct in extremely difficult or stressful situations is to run away, I deliberately keep diverting myself to stay and try." },
+                { title: "Steering Through Overwhelm", desc: "Consciously resist avoidance; reframe panic and pressure into an active prompt to focus on actionable micro-steps." },
+                { title: "Grit When Others Give Up", desc: "Push forward specifically when circumstances feel most hostile and uncertain, refusing to let stress dictate the outcome." }
+              ]
+            },
+            {
+              id: "goaldriven",
+              name: "Goal-Driven Focus",
+              points: [
+                { title: "Target-Locked Mindset", desc: "Anchor all projects, studies, and contests around clear, ambitious end goals." },
+                { title: "Relentless Follow-Through", desc: "Break ambitious objectives down into sequential execution milestones and push until completed." },
+                { title: "Self-Accountability", desc: "Measure personal performance strictly by concrete progress toward the targets set." }
+              ]
+            },
+            {
+              id: "hardworking",
+              name: "Hard Working",
+              points: [
+                { title: "Sustained Daily Effort", desc: "Consistently invest intense effort and long hours into technical builds, academics, and extracurricular leadership." },
+                { title: "No Shortcuts Taken", desc: "Willing to do the unglamorous, grind-heavy work—debugging obscure errors, contest practice, and deep review." },
+                { title: "Self-Discipline Over Motivation", desc: "Rely on ingrained discipline rather than fleeting mood to show up and execute every single day." }
+              ]
+            },
+            {
+              id: "creative",
+              name: "Creative Problem Solving",
+              points: [
+                { title: "Solving World & Personal Problems", desc: "Genuinely enjoy solving problems around the world as well as obstacles in my own day-to-day life." },
+                { title: "Unconventional Angles", desc: "Tackle bottlenecks with creative, out-of-the-box approaches that standard solutions overlook." },
+                { title: "Hands-On Builder Mindset", desc: "Transform observed friction directly into working prototypes and practical software tools." }
+              ]
+            }
+          ],
+          cameraPos: { x: -220, y: -25, z: 170 },
+          lookAt: { x: -140, y: -40, z: -80 }
+        },
+        {
+          id: 1,
+          tag: "[SEC-02] PASSIONS & PURSUITS",
+          title: "AREAS OF EXPLORATION",
+          subheading: "Interests, Valued Qualities & What I Embody",
+          subjects: [
+            {
+              id: "publicspeaking",
+              name: "Public Speaking",
+              points: [
+                { title: "Zero Fear in Front of Big Audiences", desc: "Possess no fear when standing up and speaking before large crowds; embrace the stage with natural composure." },
+                { title: "Commanding Presence", desc: "Harness energy and vocal dynamics to project confidence, capture attention, and keep the audience riveted." },
+                { title: "Unscripted Authenticity", desc: "Prefer speaking conversationally from knowledge and connection rather than memorizing stiff, robotic scripts." }
+              ]
+            },
+            {
+              id: "robotics_physics",
+              name: "Robotics & Physics",
+              points: [
+                { title: "Robotics Engineering", desc: "Passionate about mechanical design, sensor integration, and coding autonomous physical machines." },
+                { title: "Physics First-Principles", desc: "Explore the fundamental physical laws governing kinematics, forces, and electronic circuits to build functional machines." },
+                { title: "Hardware-Software Synergy", desc: "Bridge digital algorithms with physical hardware to solve real-world mechanical challenges." }
+              ]
+            },
+            {
+              id: "math_contests",
+              name: "Math Contests",
+              points: [
+                { title: "Olympiad & Contest Problem Solving", desc: "Engage in competitive math contests that test non-standard logic, discrete proofs, and rapid analytical intuition." },
+                { title: "Abstract Logic Rigor", desc: "Value the elegance of pure mathematics and the thrill of cracking complex, unfamiliar problems." },
+                { title: "Persistence in Proofs", desc: "Embrace the struggle of wrestling with difficult contest problems until an elegant proof clicks." }
+              ]
+            },
+            {
+              id: "business_networking",
+              name: "Business & Networking",
+              points: [
+                { title: "Business Strategy & Value Creation", desc: "Intrigued by how technical innovations translate into viable products, user value, and sustainable ventures." },
+                { title: "Strategic Networking", desc: "Deeply value building meaningful relationships and connecting with people to collaborate on impactful ideas." },
+                { title: "Bridging Worlds", desc: "Combine technical engineering capability with an understanding of human relationships and commerce." }
+              ]
+            }
+          ],
+          cameraPos: { x: 140, y: 35, z: 170 },
+          lookAt: { x: 215, y: 30, z: -100 }
+        },
+        {
+          id: 2,
+          tag: "[SEC-03] STRENGTH IN ACTION",
+          title: "STRENGTH: PUBLIC SPEAKING",
+          subheading: "Case Study: Social Presentation & Audience Engagement",
+          subjects: [
+            {
+              id: "mindset",
+              name: "The Initial Self-Doubt",
+              points: [
+                { title: "Inner Hesitation Before the Presentation", desc: "For my social presentation, I initially felt self-doubt that I might not do as well as I could." },
+                { title: "Actively Pulling Doubts Away", desc: "Deliberately pushed those negative thoughts away and forced myself to be motivated to get it over with." },
+                { title: "Reframing Anxiety into Drive", desc: "Turned the nervous energy into proactive determination to deliver something exceptional." }
+              ]
+            },
+            {
+              id: "innovation",
+              name: "Audience Engagement Strategy",
+              points: [
+                { title: "Diagnosing Other Presentations", desc: "Noticed a major flaw across other presentations: a complete lack of audience engagement." },
+                { title: "Ditching the Script", desc: "Made the conscious choice not to read from a script so I could maintain real, direct eye contact with the room." },
+                { title: "Interactive Questions", desc: "Asked questions directly to the audience throughout my delivery to turn passive listeners into active participants." },
+                { title: "Creative Humor", desc: "Earned genuine laughs with unexpected creative elements that nobody in the class had seen before." }
+              ]
+            },
+            {
+              id: "outcome",
+              name: "Outcome & The 'Extending' Mark",
+              points: [
+                { title: "Teacher Blown Away", desc: "When I finished presenting my part, the teacher was completely blown away by how engaging and dynamic it was." },
+                { title: "Top-Tier 'Extending' Grade", desc: "Earned the top 'Extending' assessment on my part—one of the few students across all presentations to achieve it." },
+                { title: "Pride & Validation", desc: "Felt immensely proud and validated that trusting my creativity, audience focus, and courage yielded standout results." }
+              ]
+            },
+            {
+              id: "takeaways",
+              name: "Key Takeaways",
+              points: [
+                { title: "Engagement Trumps Slides", desc: "A presentation succeeds when you connect with humans, not when you read text off a screen." },
+                { title: "Spontaneity Over Scripts", desc: "Speaking unscripted builds instant credibility and dynamic rapport with the audience." },
+                { title: "Courage Conquers Doubt", desc: "Pushing through initial self-doubt always unlocks far better performance than hiding behind notes." }
+              ]
+            }
+          ],
+          cameraPos: { x: -65, y: 105, z: 160 },
+          lookAt: { x: 20, y: 100, z: -120 }
+        },
+        {
+          id: 3,
+          tag: "[SEC-04] WEAKNESS & EVOLUTION",
+          title: "WEAKNESS: SELF-DOUBT & SHYNESS",
+          subheading: "Case Study: The Air Cadets App & Overcoming Hesitation",
+          subjects: [
+            {
+              id: "cadet_app",
+              name: "The Air Cadets App",
+              points: [
+                { title: "Built Over the Summer", desc: "Dedicated my summer to developing a full functional software app to solve a major operational problem in Air Cadets." },
+                { title: "Solving Real Squadron Friction", desc: "Designed specifically to streamline cadet workflows and fix pain points I witnessed firsthand in our squadron." },
+                { title: "A Working Solution", desc: "The software was built, operational, and had the clear potential to help the entire cadet unit." }
+              ]
+            },
+            {
+              id: "shyness",
+              name: "The Shyness & Disapproval Barrier",
+              points: [
+                { title: "Fear of Officer Rejection", desc: "Always battled persistent shyness and internal self-doubt that the officers wouldn't like the app or wouldn't approve it." },
+                { title: "Hesitation Instead of Trying", desc: "Instead of stepping up to pitch it immediately, self-doubt made me second-guess my own capability and the app's merit." },
+                { title: "Compounding Difficulties", desc: "Navigating other stressful problems at the time made the psychological barrier of reaching out feel even heavier." }
+              ]
+            },
+            {
+              id: "delay",
+              name: "The One-Month Delay",
+              points: [
+                { title: "Took a Month to Propose", desc: "Took an entire month just to build up the comfort and courage to finally propose the app to the officers." },
+                { title: "Unnecessary Stalling", desc: "Recognized that the delay was not caused by any technical flaw in the app, but solely by my internal hesitation." },
+                { title: "The Cost of Hesitation", desc: "A month was lost where the app could have already been solving problems for cadets had I reached out sooner." }
+              ]
+            },
+            {
+              id: "evolution",
+              name: "How I Would Improve & Grow",
+              points: [
+                { title: "Trust the Work Sooner", desc: "Believe in the quality of what I build instead of letting fear of authority or disapproval freeze action." },
+                { title: "Bias Toward Immediate Outreach", desc: "Next time, propose solutions within days—officers and mentors respect proactive initiative even if adjustments are needed." },
+                { title: "Reframe Rejection as Feedback", desc: "Treat potential criticism as constructive data to improve the software rather than a threat to personal worth." }
+              ]
+            }
+          ],
+          cameraPos: { x: -215, y: 75, z: 160 },
+          lookAt: { x: -130, y: 70, z: -120 }
+        },
+        {
+          id: 4,
+          tag: "[SEC-05] LESSONS & FORWARD VECTOR",
+          title: "KNOWLEDGE CARRIED FORWARD",
+          subheading: "Networking Power, Introversion & Time Management in Pre-IB/PDP",
+          subjects: [
+            {
+              id: "networking",
+              name: "Power of Networking for an Introvert",
+              points: [
+                { title: "The Power of a Simple Connection", desc: "Learned how transformative and powerful networking with people can be—a single conversation can unlock massive opportunities." },
+                { title: "The Introvert's Reality", desc: "As an introvert, talking to people I don't know does not come naturally to me at all." },
+                { title: "Pushing Out of My Comfort Zone", desc: "Committed to deliberately breaking out of my comfort zone: walking up to new people, building relationships, and teaming up to work together." }
+              ]
+            },
+            {
+              id: "time_management",
+              name: "Time Management in Pre-IB / PDP",
+              points: [
+                { title: "Critical for Academic Rigor", desc: "Time management is essential for IB/Pre-IB, especially when taking all possible PDP advanced courses." },
+                { title: "Handling Weekly Testing Cycles", desc: "Managing constant weekly quizzes and exams while keeping grades at the top tier." },
+                { title: "Balancing Academics & Passions", desc: "Discipline ensures that heavy school workloads never force me to abandon the projects I love." }
+              ]
+            },
+            {
+              id: "extracurricular_load",
+              name: "The Real Challenge: Extracurriculars",
+              points: [
+                { title: "PDP Academics Come Naturally", desc: "I don't struggle with the PDP coursework itself; the academic material comes smoothly and intuitively." },
+                { title: "The Real Hard Part", desc: "The true challenge is managing high-commitment extracurriculars alongside school: Air Cadets, Robotics, Club Leadership, App Development, and studying for Math Contests." },
+                { title: "Mastering the Juggling Act", desc: "Balancing multiple demanding disciplines taught me how to triage priorities and maximize output every single hour." }
+              ]
+            },
+            {
+              id: "forward_vector",
+              name: "Principles Carried Forward",
+              points: [
+                { title: "Approach Rather than Retreat", desc: "Carry forward the habit of approaching people and opportunities rather than staying quietly in the background." },
+                { title: "Structured Daily Architecture", desc: "Maintain calendar blocks and clear task hierarchies to sustain high extracurricular output in university and beyond." },
+                { title: "Continuous Self-Challenge", desc: "Keep seeking out the hard, uncomfortable frontiers—because that is where the most meaningful personal growth happens." }
+              ]
+            }
+          ],
+          cameraPos: { x: 80, y: -35, z: 160 },
+          lookAt: { x: 165, y: -40, z: -100 }
+        }
+      ];
+
+      let activeModuleIndex = 0;
+      let appState = 'INTRO'; // 'INTRO' | 'MASTER_BLUEPRINT' | 'MODULE_DETAIL'
+
+      /* --------------------------------------------------------------------------
+         AUDIO DESIGN (Procedural Web Audio API — SoundFX Controller)
+         Zero external dependencies, 100% procedural synthesis via AudioContext
+         -------------------------------------------------------------------------- */
+      class SoundFX {
+        constructor() {
+          this.ctx = null;
+          this.masterGain = null;
+          this.isEnabled = true;
+          this.isUnlocked = false;
+          this.hasPlayedIntroAudio = false;
+          this.masterVolume = 0.26; // Subtle, balanced cinematic sound level
+          this.init(); // Initialize AudioContext immediately on script execution!
+        }
+
+        init() {
+          if (this.ctx) {
+            if (this.ctx.state === 'suspended') {
+              this.ctx.resume().catch(() => {});
+            }
+            return;
+          }
+          try {
+            const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+            if (AudioCtxClass) {
+              this.ctx = new AudioCtxClass();
+              this.masterGain = this.ctx.createGain();
+              this.masterGain.gain.setValueAtTime(this.isEnabled ? this.masterVolume : 0.0001, this.ctx.currentTime);
+              this.masterGain.connect(this.ctx.destination);
+
+              // Attempt immediate resume upon creation for page-load autoplay
+              if (this.ctx.state === 'suspended') {
+                this.ctx.resume().then(() => {
+                  this.isUnlocked = true;
+                  this.hasPlayedIntroAudio = true;
+                  if (typeof updateAudioUI === 'function') updateAudioUI();
+                }).catch(() => {});
+              } else if (this.ctx.state === 'running') {
+                this.isUnlocked = true;
+                this.hasPlayedIntroAudio = true;
+              }
+            }
+          } catch (e) {
+            console.warn("Web Audio API initialization blocked or unsupported", e);
+          }
+        }
+
+        unlock() {
+          this.init();
+          if (!this.ctx) return;
+          if (this.ctx.state === 'suspended') {
+            this.ctx.resume().then(() => {
+              this.isUnlocked = true;
+            }).catch(() => {});
+          } else {
+            this.isUnlocked = true;
+          }
+        }
+
+        setEnabled(val) {
+          this.isEnabled = !!val;
+          if (this.masterGain && this.ctx) {
+            const now = this.ctx.currentTime;
+            this.masterGain.gain.cancelScheduledValues(now);
+            this.masterGain.gain.linearRampToValueAtTime(this.isEnabled ? this.masterVolume : 0.0001, now + 0.05);
+          }
+        }
+
+        toggle() {
+          this.unlock();
+          this.setEnabled(!this.isEnabled);
+          return this.isEnabled;
+        }
+
+        // 1. Boot Drone: Low atmospheric sub-bass sweep (drone) when blueprint initializes
+        playBootDrone(duration = 2.8) {
+          if (!this.isEnabled || !this.ctx) return;
+          try {
+            const now = this.ctx.currentTime;
+
+            // Oscillator 1: Sub-bass fundamental sine wave
+            const osc1 = this.ctx.createOscillator();
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(38, now);
+            osc1.frequency.exponentialRampToValueAtTime(74, now + duration * 0.45);
+            osc1.frequency.exponentialRampToValueAtTime(46, now + duration);
+
+            // Oscillator 2: Detuned sawtooth for electrical schematic CAD hum
+            const osc2 = this.ctx.createOscillator();
+            osc2.type = 'sawtooth';
+            osc2.frequency.setValueAtTime(42, now);
+            osc2.frequency.exponentialRampToValueAtTime(78, now + duration * 0.45);
+            osc2.frequency.exponentialRampToValueAtTime(48, now + duration);
+
+            // Resonant lowpass filter
+            const filter = this.ctx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.Q.setValueAtTime(3.0, now);
+            filter.frequency.setValueAtTime(80, now);
+            filter.frequency.exponentialRampToValueAtTime(260, now + duration * 0.4);
+            filter.frequency.exponentialRampToValueAtTime(70, now + duration);
+
+            // Gain envelope (warm swell and fade)
+            const droneGain = this.ctx.createGain();
+            droneGain.gain.setValueAtTime(0.0001, now);
+            droneGain.gain.linearRampToValueAtTime(0.18, now + 0.35);
+            droneGain.gain.setValueAtTime(0.16, now + duration * 0.6);
+            droneGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+            const osc2SubGain = this.ctx.createGain();
+            osc2SubGain.gain.setValueAtTime(0.12, now);
+
+            osc1.connect(filter);
+            osc2.connect(osc2SubGain);
+            osc2SubGain.connect(filter);
+            filter.connect(droneGain);
+            droneGain.connect(this.masterGain);
+
+            osc1.start(now);
+            osc2.start(now);
+            osc1.stop(now + duration + 0.05);
+            osc2.stop(now + duration + 0.05);
+          } catch (e) {}
+        }
+
+        // 2. High-tech digital relay clicks as coordinates & grid lines draw
+        playRelayClick(freq = 1800) {
+          if (!this.isEnabled || !this.ctx) return;
+          try {
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            const filter = this.ctx.createBiquadFilter();
+
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(freq, now);
+            osc.frequency.exponentialRampToValueAtTime(freq * 0.45, now + 0.022);
+
+            filter.type = 'bandpass';
+            filter.Q.setValueAtTime(4.5, now);
+            filter.frequency.setValueAtTime(freq, now);
+
+            gain.gain.setValueAtTime(0.06, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.025);
+
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(this.masterGain);
+
+            osc.start(now);
+            osc.stop(now + 0.028);
+          } catch (e) {}
+        }
+
+        // 3. Hover effects: subtle high-frequency blips/chirps (short sine/triangle burst, ~1200-1600Hz, ~40ms micro-decay)
+        playHoverChirp(freq = 1380) {
+          if (!this.isEnabled || !this.ctx) return;
+          try {
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now);
+            osc.frequency.exponentialRampToValueAtTime(freq * 1.15, now + 0.012);
+            osc.frequency.exponentialRampToValueAtTime(freq * 0.9, now + 0.038);
+
+            gain.gain.setValueAtTime(0.035, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
+
+            osc.connect(gain);
+            gain.connect(this.masterGain);
+
+            osc.start(now);
+            osc.stop(now + 0.042);
+          } catch (e) {}
+        }
+
+        // 4. Click & Camera Zoom: Resonant mechanical servo engaging sound + low-pass whoosh/dolly frequency sweep
+        playServoWhoosh() {
+          if (!this.isEnabled || !this.ctx) return;
+          try {
+            const now = this.ctx.currentTime;
+
+            // Layer 1: Resonant Mechanical Servo Whine (Sawtooth through bandpass)
+            const servoOsc = this.ctx.createOscillator();
+            const servoFilter = this.ctx.createBiquadFilter();
+            const servoGain = this.ctx.createGain();
+
+            servoOsc.type = 'sawtooth';
+            servoOsc.frequency.setValueAtTime(220, now);
+            servoOsc.frequency.exponentialRampToValueAtTime(540, now + 0.18);
+            servoOsc.frequency.exponentialRampToValueAtTime(140, now + 0.75);
+
+            servoFilter.type = 'bandpass';
+            servoFilter.Q.setValueAtTime(5.0, now);
+            servoFilter.frequency.setValueAtTime(450, now);
+            servoFilter.frequency.exponentialRampToValueAtTime(1200, now + 0.2);
+            servoFilter.frequency.exponentialRampToValueAtTime(320, now + 0.75);
+
+            servoGain.gain.setValueAtTime(0.001, now);
+            servoGain.gain.linearRampToValueAtTime(0.065, now + 0.12);
+            servoGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.75);
+
+            servoOsc.connect(servoFilter);
+            servoFilter.connect(servoGain);
+            servoGain.connect(this.masterGain);
+
+            servoOsc.start(now);
+            servoOsc.stop(now + 0.78);
+
+            // Layer 2: Low-pass Dolly Frequency Sweep (Spatial dolly sweep)
+            const whooshOsc = this.ctx.createOscillator();
+            const whooshFilter = this.ctx.createBiquadFilter();
+            const whooshGain = this.ctx.createGain();
+
+            whooshOsc.type = 'triangle';
+            whooshOsc.frequency.setValueAtTime(75, now);
+            whooshOsc.frequency.exponentialRampToValueAtTime(180, now + 0.25);
+            whooshOsc.frequency.exponentialRampToValueAtTime(42, now + 0.85);
+
+            whooshFilter.type = 'lowpass';
+            whooshFilter.frequency.setValueAtTime(180, now);
+            whooshFilter.frequency.exponentialRampToValueAtTime(1400, now + 0.3);
+            whooshFilter.frequency.exponentialRampToValueAtTime(120, now + 0.85);
+
+            whooshGain.gain.setValueAtTime(0.001, now);
+            whooshGain.gain.linearRampToValueAtTime(0.08, now + 0.2);
+            whooshGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.85);
+
+            whooshOsc.connect(whooshFilter);
+            whooshFilter.connect(whooshGain);
+            whooshGain.connect(this.masterGain);
+
+            whooshOsc.start(now);
+            whooshOsc.stop(now + 0.88);
+          } catch (e) {}
+        }
+
+        // 5. Clean, crisp tactile "optic latch" double micro-click when selecting/closing sub-assemblies
+        playOpticLatch(freq = 2400) {
+          if (!this.isEnabled || !this.ctx) return;
+          try {
+            const now = this.ctx.currentTime;
+
+            // Click 1: Sharp high aperture release
+            const osc1 = this.ctx.createOscillator();
+            const gain1 = this.ctx.createGain();
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(freq, now);
+            osc1.frequency.exponentialRampToValueAtTime(freq * 0.4, now + 0.018);
+
+            gain1.gain.setValueAtTime(0.07, now);
+            gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.018);
+
+            osc1.connect(gain1);
+            gain1.connect(this.masterGain);
+            osc1.start(now);
+            osc1.stop(now + 0.02);
+
+            // Click 2: Resonant metallic seating latch (22ms later)
+            const osc2 = this.ctx.createOscillator();
+            const filter2 = this.ctx.createBiquadFilter();
+            const gain2 = this.ctx.createGain();
+
+            osc2.type = 'triangle';
+            osc2.frequency.setValueAtTime(freq * 0.65, now + 0.022);
+            osc2.frequency.exponentialRampToValueAtTime(freq * 0.25, now + 0.055);
+
+            filter2.type = 'bandpass';
+            filter2.Q.setValueAtTime(6.0, now + 0.022);
+            filter2.frequency.setValueAtTime(freq * 0.7, now + 0.022);
+
+            gain2.gain.setValueAtTime(0.0001, now);
+            gain2.gain.setValueAtTime(0.08, now + 0.022);
+            gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.058);
+
+            osc2.connect(filter2);
+            filter2.connect(gain2);
+            gain2.connect(this.masterGain);
+
+            osc2.start(now + 0.022);
+            osc2.stop(now + 0.06);
+          } catch (e) {}
+        }
+
+        // 6. Cad confirmation beep for telemetry locks and calibrations
+        playCadBeep(freq = 2400) {
+          if (!this.isEnabled || !this.ctx) return;
+          try {
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now);
+            osc.frequency.exponentialRampToValueAtTime(freq * 1.45, now + 0.05);
+
+            gain.gain.setValueAtTime(0.045, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.055);
+
+            osc.connect(gain);
+            gain.connect(this.masterGain);
+
+            osc.start(now);
+            osc.stop(now + 0.06);
+          } catch (e) {}
+        }
+
+        // 7. Spatial Deep Dive whoosh for 3D camera zoom into node core
+        playDeepDiveWhoosh() {
+          if (!this.isEnabled || !this.ctx) return;
+          try {
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            const filter = this.ctx.createBiquadFilter();
+
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(260, now);
+            filter.frequency.exponentialRampToValueAtTime(1900, now + 0.35);
+            filter.frequency.exponentialRampToValueAtTime(140, now + 0.95);
+
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(210, now);
+            osc.frequency.exponentialRampToValueAtTime(65, now + 0.9);
+
+            gain.gain.setValueAtTime(0.001, now);
+            gain.gain.linearRampToValueAtTime(0.06, now + 0.16);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.95);
+
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(this.masterGain);
+
+            osc.start(now);
+            osc.stop(now + 0.98);
+          } catch (e) {}
+        }
+
+        // 8. Laser Glow Bar Spatial Whoosh (Stereo-panned sweep across the screen)
+        playGlowBarSweepWhoosh(duration = 1.6) {
+          if (!this.isEnabled || !this.ctx) return;
+          try {
+            const now = this.ctx.currentTime;
+
+            // Stereo Panner (Slides across soundstage: -0.85 -> +0.85)
+            let panner = null;
+            if (this.ctx.createStereoPanner) {
+              panner = this.ctx.createStereoPanner();
+              panner.pan.setValueAtTime(-0.85, now);
+              panner.pan.linearRampToValueAtTime(0.85, now + duration);
+            }
+
+            // Layer 1: Resonant Laser Glow Sweep
+            const laserOsc = this.ctx.createOscillator();
+            const laserFilter = this.ctx.createBiquadFilter();
+            const laserGain = this.ctx.createGain();
+
+            laserOsc.type = 'sawtooth';
+            laserOsc.frequency.setValueAtTime(260, now);
+            laserOsc.frequency.exponentialRampToValueAtTime(1180, now + duration * 0.48);
+            laserOsc.frequency.exponentialRampToValueAtTime(320, now + duration);
+
+            laserFilter.type = 'bandpass';
+            laserFilter.Q.setValueAtTime(5.0, now);
+            laserFilter.frequency.setValueAtTime(450, now);
+            laserFilter.frequency.exponentialRampToValueAtTime(1600, now + duration * 0.5);
+            laserFilter.frequency.exponentialRampToValueAtTime(380, now + duration);
+
+            laserGain.gain.setValueAtTime(0.0001, now);
+            laserGain.gain.linearRampToValueAtTime(0.075, now + duration * 0.35);
+            laserGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+            laserOsc.connect(laserFilter);
+            laserFilter.connect(laserGain);
+
+            // Layer 2: Atmospheric Air Displacement / Whoosh
+            const whooshOsc = this.ctx.createOscillator();
+            const whooshFilter = this.ctx.createBiquadFilter();
+            const whooshGain = this.ctx.createGain();
+
+            whooshOsc.type = 'triangle';
+            whooshOsc.frequency.setValueAtTime(110, now);
+            whooshOsc.frequency.exponentialRampToValueAtTime(290, now + duration * 0.45);
+            whooshOsc.frequency.exponentialRampToValueAtTime(75, now + duration);
+
+            whooshFilter.type = 'lowpass';
+            whooshFilter.frequency.setValueAtTime(220, now);
+            whooshFilter.frequency.exponentialRampToValueAtTime(1200, now + duration * 0.5);
+            whooshFilter.frequency.exponentialRampToValueAtTime(160, now + duration);
+
+            whooshGain.gain.setValueAtTime(0.0001, now);
+            whooshGain.gain.linearRampToValueAtTime(0.09, now + duration * 0.35);
+            whooshGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+            whooshOsc.connect(whooshFilter);
+            whooshFilter.connect(whooshGain);
+
+            if (panner) {
+              laserGain.connect(panner);
+              whooshGain.connect(panner);
+              panner.connect(this.masterGain);
+            } else {
+              laserGain.connect(this.masterGain);
+              whooshGain.connect(this.masterGain);
+            }
+
+            laserOsc.start(now);
+            whooshOsc.start(now);
+            laserOsc.stop(now + duration + 0.05);
+            whooshOsc.stop(now + duration + 0.05);
+          } catch (e) {}
+        }
+
+        // 9. Schematic Calibration Loading Sound (Ascending digital computation pulse)
+        playCalibrationLoadingSound(duration = 3.8) {
+          if (!this.isEnabled || !this.ctx) return;
+          try {
+            const now = this.ctx.currentTime;
+
+            const osc1 = this.ctx.createOscillator();
+            const osc2 = this.ctx.createOscillator();
+            const filter = this.ctx.createBiquadFilter();
+            const gainNode = this.ctx.createGain();
+
+            // Progressively ascends as calibration fills 0% -> 100%
+            osc1.type = 'triangle';
+            osc1.frequency.setValueAtTime(320, now);
+            osc1.frequency.exponentialRampToValueAtTime(840, now + duration);
+
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(324, now);
+            osc2.frequency.exponentialRampToValueAtTime(848, now + duration);
+
+            filter.type = 'bandpass';
+            filter.Q.setValueAtTime(4.0, now);
+            filter.frequency.setValueAtTime(420, now);
+            filter.frequency.exponentialRampToValueAtTime(1100, now + duration);
+
+            // Subtle LFO modulation creating a rhythmic computational flutter
+            const lfo = this.ctx.createOscillator();
+            const lfoGain = this.ctx.createGain();
+            lfo.type = 'square';
+            lfo.frequency.setValueAtTime(10, now);
+            lfo.frequency.linearRampToValueAtTime(16, now + duration);
+            lfoGain.gain.setValueAtTime(35, now);
+
+            lfo.connect(lfoGain);
+            lfoGain.connect(filter.frequency);
+
+            gainNode.gain.setValueAtTime(0.0001, now);
+            gainNode.gain.linearRampToValueAtTime(0.042, now + 0.3);
+            gainNode.gain.setValueAtTime(0.042, now + duration * 0.85);
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+            osc1.connect(filter);
+            osc2.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(this.masterGain);
+
+            lfo.start(now);
+            osc1.start(now);
+            osc2.start(now);
+            lfo.stop(now + duration + 0.05);
+            osc1.stop(now + duration + 0.05);
+            osc2.stop(now + duration + 0.05);
+          } catch (e) {}
+        }
+
+        // 10. Data Packet Load Chirp (Rapid micro-ping during calibration steps and node load)
+        playDataLoadChirp(freq = 1950) {
+          if (!this.isEnabled || !this.ctx) return;
+          try {
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now);
+            osc.frequency.exponentialRampToValueAtTime(freq * 1.35, now + 0.022);
+
+            gain.gain.setValueAtTime(0.035, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.025);
+
+            osc.connect(gain);
+            gain.connect(this.masterGain);
+
+            osc.start(now);
+            osc.stop(now + 0.028);
+          } catch (e) {}
+        }
+
+        // 11. Mechanical Keyboard Keystroke (Switch clack + keycap bottom-out thock)
+        playKeyboardKey(isSpaceOrEnter = false) {
+          if (!this.isEnabled || !this.ctx) return;
+          try {
+            const now = this.ctx.currentTime;
+            const detune = (Math.random() - 0.5) * 220;
+            const baseFreq = isSpaceOrEnter ? 450 : 2100 + (Math.random() - 0.5) * 450;
+
+            // Layer 1: High crisp switch actuator contact clack
+            const osc1 = this.ctx.createOscillator();
+            const gain1 = this.ctx.createGain();
+            const filter1 = this.ctx.createBiquadFilter();
+
+            osc1.type = 'triangle';
+            osc1.frequency.setValueAtTime(baseFreq + detune, now);
+            osc1.frequency.exponentialRampToValueAtTime(baseFreq * 0.35, now + 0.016);
+
+            filter1.type = 'bandpass';
+            filter1.Q.setValueAtTime(4.5, now);
+            filter1.frequency.setValueAtTime(baseFreq, now);
+
+            gain1.gain.setValueAtTime(isSpaceOrEnter ? 0.065 : 0.05, now);
+            gain1.gain.exponentialRampToValueAtTime(0.0001, now + (isSpaceOrEnter ? 0.035 : 0.02));
+
+            osc1.connect(filter1);
+            filter1.connect(gain1);
+            gain1.connect(this.masterGain);
+
+            osc1.start(now);
+            osc1.stop(now + 0.04);
+
+            // Layer 2: Switch body / keycap bottom-out thock
+            const osc2 = this.ctx.createOscillator();
+            const gain2 = this.ctx.createGain();
+            const filter2 = this.ctx.createBiquadFilter();
+
+            const thockFreq = isSpaceOrEnter ? 210 : 380 + (Math.random() - 0.5) * 80;
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(thockFreq, now);
+            osc2.frequency.exponentialRampToValueAtTime(thockFreq * 0.45, now + 0.028);
+
+            filter2.type = 'lowpass';
+            filter2.frequency.setValueAtTime(thockFreq * 2.2, now);
+
+            gain2.gain.setValueAtTime(isSpaceOrEnter ? 0.08 : 0.055, now);
+            gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.032);
+
+            osc2.connect(filter2);
+            filter2.connect(gain2);
+            gain2.connect(this.masterGain);
+
+            osc2.start(now);
+            osc2.stop(now + 0.04);
+          } catch (e) {}
+        }
+
+        // 12. Terminal Cipher Scramble Micro-Keystroke
+        playKeyboardScrambleTick() {
+          if (!this.isEnabled || !this.ctx) return;
+          try {
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            const freq = 2400 + (Math.random() - 0.5) * 600;
+
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(freq, now);
+            osc.frequency.exponentialRampToValueAtTime(freq * 0.5, now + 0.012);
+
+            gain.gain.setValueAtTime(0.02, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.014);
+
+            osc.connect(gain);
+            gain.connect(this.masterGain);
+
+            osc.start(now);
+            osc.stop(now + 0.016);
+          } catch (e) {}
+        }
+      }
+
+      // Instantiate SoundFX controller
+      const soundFX = new SoundFX();
+
+      // Backward-compatibility shims
+      function initAudio() { soundFX.unlock(); }
+      function playServoWhoosh() { soundFX.playServoWhoosh(); }
+      function playDeepDiveWhoosh() { soundFX.playDeepDiveWhoosh(); }
+      function playCadBeep(freq) { soundFX.playCadBeep(freq); }
+      function playGlowBarSweepWhoosh(dur) { soundFX.playGlowBarSweepWhoosh(dur); }
+      function playKeyboardKey(isSpace) { soundFX.playKeyboardKey(isSpace); }
+
+      // Auto-unlock audio on first user gesture anywhere
+      const unlockAudioOnUserGesture = () => {
+        const wasSuspended = soundFX.ctx && soundFX.ctx.state === 'suspended';
+        soundFX.unlock();
+        updateAudioUI();
+        if (audioGestureHint) {
+          audioGestureHint.style.display = 'none';
+        }
+        // If audio was blocked on initial load, user's very first interaction instantly runs intro with full sound!
+        if (appState === 'INTRO' && wasSuspended && !soundFX.hasPlayedIntroAudio) {
+          soundFX.hasPlayedIntroAudio = true;
+          runIntroSequence();
+        }
+        window.removeEventListener('pointerdown', unlockAudioOnUserGesture);
+        window.removeEventListener('keydown', unlockAudioOnUserGesture);
+        window.removeEventListener('touchstart', unlockAudioOnUserGesture);
+        window.removeEventListener('click', unlockAudioOnUserGesture);
+      };
+      window.addEventListener('pointerdown', unlockAudioOnUserGesture);
+      window.addEventListener('keydown', unlockAudioOnUserGesture);
+      window.addEventListener('touchstart', unlockAudioOnUserGesture);
+      window.addEventListener('click', unlockAudioOnUserGesture);
+
+      if (audioGestureHint) {
+        audioGestureHint.addEventListener('click', (e) => {
+          e.stopPropagation();
+          soundFX.unlock();
+          soundFX.hasPlayedIntroAudio = true;
+          audioGestureHint.style.display = 'none';
+          runIntroSequence();
+        });
+      }
+
+      if (viewport) {
+        viewport.addEventListener('click', () => {
+          if (soundFX.ctx && soundFX.ctx.state === 'suspended') {
+            soundFX.unlock();
+            if (audioGestureHint) audioGestureHint.style.display = 'none';
+            if (appState === 'INTRO' && !soundFX.hasPlayedIntroAudio) {
+              soundFX.hasPlayedIntroAudio = true;
+              runIntroSequence();
+            }
+          }
+        });
+      }
+
+      function updateAudioUI() {
+        if (!audioToggleBtn || !audioLabel) return;
+        if (soundFX.isEnabled) {
+          audioLabel.innerText = 'AUDIO: ON';
+          if (audioDot) audioDot.classList.add('active');
+          audioToggleBtn.style.borderColor = 'var(--cyan-laser)';
+          audioToggleBtn.style.background = 'rgba(0, 240, 255, 0.2)';
+        } else {
+          audioLabel.innerText = 'AUDIO: OFF';
+          if (audioDot) audioDot.classList.remove('active');
+          audioToggleBtn.style.borderColor = 'rgba(0, 240, 255, 0.35)';
+          audioToggleBtn.style.background = 'rgba(0, 240, 255, 0.08)';
+        }
+      }
+
+      audioToggleBtn.addEventListener('click', () => {
+        const active = soundFX.toggle();
+        updateAudioUI();
+        if (active) {
+          soundFX.playCadBeep(2600);
+        }
+      });
+
+      /* --------------------------------------------------------------------------
+         THREE.JS 3D SCENE SETUP
+         -------------------------------------------------------------------------- */
+      let scene, camera, renderer;
+      let camLookAtTarget = new THREE.Vector3(0, 0, 0);
+
+      let coreGroup, gimbalRingsGroup;
+      let spatialModulesGroup;
+      let mindmapSubNodes = [];
+      let globalParticles, floorGrid, perspectiveGridTunnel;
+      let reticleGlitch = { active: false, scale: 1.0, jitterX: 0, jitterY: 0 };
+
+      const introAnimState = {
+        gridExpansion: 0,
+        laserSweepX: -0.2,
+        laserAlpha: 0,
+        dimensionAlpha: 0,
+        compassAlpha: 0,
+        centerLockPulse: 0,
+        calProgress: 0,
+        cameraZ: 420,
+        warpSpeed: 1.0,
+        masterGridPulse: 0.0
+      };
+
+      /* --------------------------------------------------------------------------
+         INFINITE PERSPECTIVE GRID TUNNEL (Three.js WebGL Shader Module)
+         Continuous ambient vector lines streaming inward toward System Origin [0,0,0]
+         -------------------------------------------------------------------------- */
+      class PerspectiveGridTunnel {
+        constructor(options = {}) {
+          this.speed = options.speed !== undefined ? options.speed : 38.0; // Hypnotic slow pace (0.15x)
+          this.color = options.color || new THREE.Color(0x00f0ff);
+          this.fogColor = options.fogColor || new THREE.Color(0x030c17);
+          this.floorY = options.floorY !== undefined ? options.floorY : -175;
+          this.ceilingY = options.ceilingY !== undefined ? options.ceilingY : 185;
+          this.width = options.width || 2400;
+          this.depth = options.depth || 3800;
+          this.centerZ = options.centerZ !== undefined ? options.centerZ : -200;
+
+          this.mesh = new THREE.Group();
+          this.mesh.name = 'PerspectiveGridTunnel';
+
+          this.uniforms = {
+            uTime: { value: 0 },
+            uSpeed: { value: this.speed },
+            uColor: { value: this.color },
+            uFogColor: { value: this.fogColor },
+            uFogDensity: { value: options.fogDensity !== undefined ? options.fogDensity : 0.0015 },
+            uMinorSpacing: { value: 30.0 },
+            uMajorSpacing: { value: 120.0 }
+          };
+
+          this.init();
+        }
+
+        init() {
+          const vertexShader = `
+            varying vec2 vUv;
+            varying vec3 vWorldPosition;
+
+            void main() {
+              vUv = uv;
+              vec4 worldPos = modelMatrix * vec4(position, 1.0);
+              vWorldPosition = worldPos.xyz;
+              gl_Position = projectionMatrix * viewMatrix * worldPos;
+            }
+          `;
+
+          const fragmentShader = `
+            uniform float uTime;
+            uniform float uSpeed;
+            uniform vec3 uColor;
+            uniform vec3 uFogColor;
+            uniform float uFogDensity;
+            uniform float uMinorSpacing;
+            uniform float uMajorSpacing;
+
+            varying vec2 vUv;
+            varying vec3 vWorldPosition;
+
+            float computeGridLine(float coord, float spacing, float lineWidth) {
+              float halfWidth = lineWidth * 0.5;
+              float dist = abs(fract((coord - halfWidth) / spacing + 0.5) - 0.5) * spacing;
+              float dDist = fwidth(coord);
+              return 1.0 - smoothstep(0.0, dDist * 1.5, dist);
+            }
+
+            void main() {
+              float xPos = vWorldPosition.x;
+              // Transverse lines streaming INWARD toward center vanishing point (moving along -Z)
+              float zStream = vWorldPosition.z + (uTime * uSpeed);
+
+              // 1. Minor vector grid lines
+              float minorX = computeGridLine(xPos, uMinorSpacing, 0.85);
+              float minorZ = computeGridLine(zStream, uMinorSpacing, 0.85);
+              float minorGrid = max(minorX, minorZ);
+
+              // 2. Major vector grid lines (every 120 units)
+              float majorX = computeGridLine(xPos, uMajorSpacing, 1.4);
+              float majorZ = computeGridLine(zStream, uMajorSpacing, 1.4);
+              float majorGrid = max(majorX, majorZ);
+
+              // 3. Central Axis Line at X = 0 (Vanishing Point Guide Line)
+              float centerAxis = 1.0 - smoothstep(0.0, fwidth(xPos) * 2.2, abs(xPos));
+              float axisTicks = computeGridLine(zStream, 60.0, 1.5) * (1.0 - smoothstep(0.0, 22.0, abs(xPos)));
+
+              // 4. Combine line intensities
+              float lineAlpha = (minorGrid * 0.20) + (majorGrid * 0.50) + (centerAxis * 0.60) + (axisTicks * 0.45);
+              float intersection = (majorX * majorZ) * 0.6 + (centerAxis * majorZ) * 0.8;
+              lineAlpha += intersection;
+
+              if (lineAlpha <= 0.001) {
+                discard;
+              }
+
+              // 5. Perimeter Soft Edge Falloff
+              float edgeFadeX = smoothstep(0.0, 0.12, vUv.x) * smoothstep(1.0, 0.88, vUv.x);
+              float edgeFadeZ = smoothstep(0.0, 0.10, vUv.y) * smoothstep(1.0, 0.90, vUv.y);
+              float borderMask = edgeFadeX * edgeFadeZ;
+
+              // 6. Exponential Depth Fog toward central vanishing horizon
+              float distToCam = length(vWorldPosition - cameraPosition);
+              float fogFactor = exp(-distToCam * uFogDensity);
+              fogFactor = clamp(fogFactor, 0.0, 1.0);
+
+              vec3 lineColor = mix(uColor, vec3(1.0), (majorGrid * 0.35 + intersection * 0.5));
+              float finalAlpha = lineAlpha * borderMask * fogFactor;
+
+              gl_FragColor = vec4(lineColor, finalAlpha);
+            }
+          `;
+
+          const material = new THREE.ShaderMaterial({
+            vertexShader,
+            fragmentShader,
+            uniforms: this.uniforms,
+            transparent: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            side: THREE.DoubleSide,
+            extensions: {
+              derivatives: true
+            }
+          });
+
+          const planeGeo = new THREE.PlaneGeometry(this.width, this.depth, 1, 1);
+
+          // Floor Plane (Converging downward perspective)
+          const floorMesh = new THREE.Mesh(planeGeo, material);
+          floorMesh.rotation.x = -Math.PI / 2;
+          floorMesh.position.set(0, this.floorY, this.centerZ);
+          this.mesh.add(floorMesh);
+
+          // Ceiling Plane (Converging upward perspective)
+          const ceilingMesh = new THREE.Mesh(planeGeo, material);
+          ceilingMesh.rotation.x = Math.PI / 2;
+          ceilingMesh.position.set(0, this.ceilingY, this.centerZ);
+          this.mesh.add(ceilingMesh);
+
+          // Optional Side Reference Guides (Bounding vector rails)
+          const railGeo = new THREE.BufferGeometry().setFromPoints([
+            new THREE.Vector3(-this.width * 0.38, this.floorY, this.centerZ - this.depth * 0.5),
+            new THREE.Vector3(-this.width * 0.38, this.floorY, this.centerZ + this.depth * 0.5),
+            new THREE.Vector3(this.width * 0.38, this.floorY, this.centerZ - this.depth * 0.5),
+            new THREE.Vector3(this.width * 0.38, this.floorY, this.centerZ + this.depth * 0.5)
+          ]);
+          const railMat = new THREE.LineBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.25 });
+          const rails = new THREE.LineSegments(railGeo, railMat);
+          this.mesh.add(rails);
+        }
+
+        update(delta = 0.016) {
+          this.uniforms.uTime.value += delta;
+        }
+
+        setSpeed(newSpeed) {
+          this.uniforms.uSpeed.value = newSpeed;
+        }
+
+        setColor(hexColor) {
+          this.uniforms.uColor.value.set(hexColor);
+        }
+      }
+
+      function initThreeScene() {
+        scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x030c17, 0.0016);
+
+        camera = new THREE.PerspectiveCamera(45, 16 / 9, 1, 3000);
+        camera.position.set(0, 10, introAnimState.cameraZ);
+
+        renderer = new THREE.WebGLRenderer({
+          canvas: webglCanvas,
+          antialias: true,
+          alpha: true
+        });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        renderer.setSize(viewport.clientWidth, viewport.clientHeight);
+
+        /* 1. CENTRAL GIMBAL CORE (INTRO HERO ARTIFACT) */
+        coreGroup = new THREE.Group();
+        scene.add(coreGroup);
+
+        const icosaGeo = new THREE.IcosahedronGeometry(72, 1);
+        const icosaWire = new THREE.LineSegments(
+          new THREE.EdgesGeometry(icosaGeo),
+          new THREE.LineBasicMaterial({ color: 0x00f0ff, linewidth: 2, transparent: true, opacity: 0.85 })
+        );
+        coreGroup.add(icosaWire);
+
+        const icosaPoints = new THREE.Points(
+          icosaGeo,
+          new THREE.PointsMaterial({ color: 0x00f0ff, size: 4, blending: THREE.AdditiveBlending })
+        );
+        coreGroup.add(icosaPoints);
+
+        const octaGeo = new THREE.OctahedronGeometry(42, 0);
+        const octaWire = new THREE.LineSegments(
+          new THREE.EdgesGeometry(octaGeo),
+          new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 1.5 })
+        );
+        coreGroup.add(octaWire);
+
+        gimbalRingsGroup = new THREE.Group();
+        coreGroup.add(gimbalRingsGroup);
+
+        const r1 = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.RingGeometry(110, 112, 64)), new THREE.LineBasicMaterial({ color: 0x00f0ff }));
+        const r2 = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.RingGeometry(138, 140, 64)), new THREE.LineBasicMaterial({ color: 0x38bdf8 }));
+        r2.rotation.x = Math.PI / 2;
+        const r3 = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.RingGeometry(168, 170, 64)), new THREE.LineBasicMaterial({ color: 0x00f0ff }));
+        r3.rotation.y = Math.PI / 2;
+        gimbalRingsGroup.add(r1, r2, r3);
+
+        const satGeo = new THREE.SphereGeometry(2.5, 8, 8);
+        const satMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
+        const sat1 = new THREE.Mesh(satGeo, satMat);
+        sat1.position.set(111, 0, 0);
+        r1.add(sat1);
+        const sat2 = new THREE.Mesh(satGeo, satMat);
+        sat2.position.set(0, 139, 0);
+        r2.add(sat2);
+        const sat3 = new THREE.Mesh(satGeo, satMat);
+        sat3.position.set(0, 0, 169);
+        r3.add(sat3);
+
+        /* 2. SPATIAL EVENT NODES IN 3D SPACE */
+        spatialModulesGroup = new THREE.Group();
+        scene.add(spatialModulesGroup);
+
+        // Node 0: Math Tetrahedra (-160, -40, -80)
+        const m0Geo = new THREE.TetrahedronGeometry(45, 0);
+        const m0Mesh = new THREE.LineSegments(new THREE.EdgesGeometry(m0Geo), new THREE.LineBasicMaterial({ color: 0x00f0ff }));
+        m0Mesh.position.set(-160, -40, -80);
+        spatialModulesGroup.add(m0Mesh);
+
+        // Node 1: Mechanical Gears (200, 30, -100)
+        const m1Geo = new THREE.CylinderGeometry(45, 45, 12, 16, 1, true);
+        const m1Mesh = new THREE.LineSegments(new THREE.EdgesGeometry(m1Geo), new THREE.LineBasicMaterial({ color: 0xf59e0b }));
+        m1Mesh.position.set(200, 30, -100);
+        spatialModulesGroup.add(m1Mesh);
+
+        // Node 2: Venture Box Truss (0, 100, -120)
+        const m2Geo = new THREE.BoxGeometry(60, 60, 60);
+        const m2Mesh = new THREE.LineSegments(new THREE.EdgesGeometry(m2Geo), new THREE.LineBasicMaterial({ color: 0x38bdf8 }));
+        m2Mesh.position.set(0, 100, -120);
+        spatialModulesGroup.add(m2Mesh);
+
+        // Node 3: Swarm Network (-150, 70, -120)
+        const m3Geo = new THREE.IcosahedronGeometry(35, 0);
+        const m3Mesh = new THREE.LineSegments(new THREE.EdgesGeometry(m3Geo), new THREE.LineBasicMaterial({ color: 0xfbbf24 }));
+        m3Mesh.position.set(-150, 70, -120);
+        spatialModulesGroup.add(m3Mesh);
+
+        // Node 4: Orbital Rings (150, -40, -100)
+        const m4Geo = new THREE.RingGeometry(50, 52, 32);
+        const m4Mesh = new THREE.LineSegments(new THREE.EdgesGeometry(m4Geo), new THREE.LineBasicMaterial({ color: 0x00f0ff }));
+        m4Mesh.position.set(150, -40, -100);
+        m4Mesh.rotation.x = Math.PI / 3;
+        spatialModulesGroup.add(m4Mesh);
+
+        /* ATTACH 4 3D MINDMAP SUB-NODES & BRANCH CONNECTORS TO EACH MODULE */
+        mindmapSubNodes = [];
+
+        spatialModulesGroup.children.forEach((parentMesh, mIdx) => {
+          const subList = [];
+
+          MINDMAP_OFFSETS.forEach((off, sIdx) => {
+            const subGroup = new THREE.Group();
+            const wx = parentMesh.position.x + off.x;
+            const wy = parentMesh.position.y + off.y;
+            const wz = parentMesh.position.z + off.z;
+            subGroup.position.set(wx, wy, wz);
+
+            // 1. OUTER LATTICE GROUP (Separates & expands during 3D dive)
+            const outerLatticeGroup = new THREE.Group();
+            subGroup.add(outerLatticeGroup);
+
+            let sGeo;
+            if (sIdx === 0) sGeo = new THREE.OctahedronGeometry(16, 0);
+            else if (sIdx === 1) sGeo = new THREE.DodecahedronGeometry(15, 0);
+            else if (sIdx === 2) sGeo = new THREE.IcosahedronGeometry(16, 0);
+            else sGeo = new THREE.TetrahedronGeometry(18, 1);
+
+            const sColor = sIdx === 0 ? 0x00f0ff : sIdx === 1 ? 0x38bdf8 : sIdx === 2 ? 0xf59e0b : 0x00f0ff;
+            const outerWire = new THREE.LineSegments(
+              new THREE.EdgesGeometry(sGeo),
+              new THREE.LineBasicMaterial({ color: sColor, transparent: true, opacity: 0.85 })
+            );
+            outerLatticeGroup.add(outerWire);
+
+            const outerPoints = new THREE.Points(
+              sGeo,
+              new THREE.PointsMaterial({ color: sColor, size: 3.2, blending: THREE.AdditiveBlending })
+            );
+            outerLatticeGroup.add(outerPoints);
+
+            // Concentric Ring 1 (expands along -Z in exploded view)
+            const ring1Geo = new THREE.RingGeometry(22, 23.5, 32);
+            const concentricRing1 = new THREE.LineSegments(
+              new THREE.EdgesGeometry(ring1Geo),
+              new THREE.LineBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.55 })
+            );
+            concentricRing1.rotation.x = Math.PI / (sIdx + 1.8);
+            outerLatticeGroup.add(concentricRing1);
+
+            // Concentric Ring 2 (expands along +Z in exploded view)
+            const ring2Geo = new THREE.RingGeometry(27, 28.2, 32);
+            const concentricRing2 = new THREE.LineSegments(
+              new THREE.EdgesGeometry(ring2Geo),
+              new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.42 })
+            );
+            concentricRing2.rotation.y = Math.PI / (sIdx + 2.2);
+            concentricRing2.rotation.z = Math.PI / 4;
+            outerLatticeGroup.add(concentricRing2);
+
+            // 2. INNER CORE GROUP (Nested illuminated polyhedral core revealed on camera arrival)
+            const innerCoreGroup = new THREE.Group();
+            subGroup.add(innerCoreGroup);
+
+            // Nested intricate polyhedral wireframe core
+            let coreGeo;
+            if (sIdx === 0) coreGeo = new THREE.IcosahedronGeometry(7.5, 1);
+            else if (sIdx === 1) coreGeo = new THREE.OctahedronGeometry(7, 0);
+            else if (sIdx === 2) coreGeo = new THREE.DodecahedronGeometry(6.5, 0);
+            else coreGeo = new THREE.OctahedronGeometry(7.5, 1);
+
+            const coreWire = new THREE.LineSegments(
+              new THREE.EdgesGeometry(coreGeo),
+              new THREE.LineBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.95, linewidth: 1.5 })
+            );
+            innerCoreGroup.add(coreWire);
+
+            // Glowing central nucleus mesh
+            const nucGeo = new THREE.SphereGeometry(3.2, 12, 12);
+            const nucleus = new THREE.Mesh(
+              nucGeo,
+              new THREE.MeshBasicMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.9 })
+            );
+            innerCoreGroup.add(nucleus);
+
+            // High density core points
+            const corePoints = new THREE.Points(
+              coreGeo,
+              new THREE.PointsMaterial({ color: 0x00f0ff, size: 2.5, blending: THREE.AdditiveBlending })
+            );
+            innerCoreGroup.add(corePoints);
+
+            // Planar shockwave ring for ignition pulse
+            const shockGeo = new THREE.RingGeometry(1, 2.2, 32);
+            const shockwaveRing = new THREE.Mesh(
+              shockGeo,
+              new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0, side: THREE.DoubleSide })
+            );
+            innerCoreGroup.add(shockwaveRing);
+
+            spatialModulesGroup.add(subGroup);
+
+            subList.push({
+              group: subGroup,
+              outerLattice: outerLatticeGroup,
+              outerWire: outerWire,
+              concentricRing1: concentricRing1,
+              concentricRing2: concentricRing2,
+              innerCore: innerCoreGroup,
+              coreWire: coreWire,
+              nucleus: nucleus,
+              shockwaveRing: shockwaveRing,
+              offset: off,
+              worldX: wx,
+              worldY: wy,
+              worldZ: wz
+            });
+
+            // Branch Line from parent module hub to this sub-node
+            const branchPoints = [
+              new THREE.Vector3(parentMesh.position.x, parentMesh.position.y, parentMesh.position.z),
+              new THREE.Vector3(
+                parentMesh.position.x + off.x * 0.45,
+                parentMesh.position.y + off.y * 0.45 + 10,
+                parentMesh.position.z + off.z * 0.45
+              ),
+              new THREE.Vector3(wx, wy, wz)
+            ];
+            const branchCurve = new THREE.CatmullRomCurve3(branchPoints);
+            const branchGeo = new THREE.BufferGeometry().setFromPoints(branchCurve.getPoints(20));
+            const branchLine = new THREE.Line(
+              branchGeo,
+              new THREE.LineBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.38 })
+            );
+            spatialModulesGroup.add(branchLine);
+          });
+
+          // Interconnecting sequential lines between sibling sub-nodes (forming the 3D mindmap lattice!)
+          for (let i = 0; i < subList.length - 1; i++) {
+            const p1 = subList[i];
+            const p2 = subList[i + 1];
+            const seqGeo = new THREE.BufferGeometry().setFromPoints([
+              new THREE.Vector3(p1.worldX, p1.worldY, p1.worldZ),
+              new THREE.Vector3(p2.worldX, p2.worldY, p2.worldZ)
+            ]);
+            const seqLine = new THREE.Line(
+              seqGeo,
+              new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.25 })
+            );
+            spatialModulesGroup.add(seqLine);
+          }
+
+          mindmapSubNodes.push(subList);
+        });
+
+        /* 3. INFINITE PERSPECTIVE GRID TUNNEL & AMBIENT DUST */
+        perspectiveGridTunnel = new PerspectiveGridTunnel({
+          speed: 36.0,
+          floorY: -175,
+          ceilingY: 185,
+          width: 2400,
+          depth: 3800,
+          centerZ: -200,
+          fogDensity: 0.0014
+        });
+        scene.add(perspectiveGridTunnel.mesh);
+
+        floorGrid = new THREE.GridHelper(2600, 65, 0x00f0ff, 0x093052);
+        floorGrid.position.y = -180;
+        floorGrid.material.transparent = true;
+        floorGrid.material.opacity = 0.15;
+        scene.add(floorGrid);
+
+        const pCount = 380;
+        const pPositions = new Float32Array(pCount * 3);
+        for (let i = 0; i < pCount * 3; i += 3) {
+          pPositions[i] = (Math.random() - 0.5) * 1600;
+          pPositions[i + 1] = (Math.random() - 0.5) * 900;
+          pPositions[i + 2] = (Math.random() - 0.5) * 1400;
+        }
+        const pGeo = new THREE.BufferGeometry();
+        pGeo.setAttribute('position', new THREE.BufferAttribute(pPositions, 3));
+        const pMat = new THREE.PointsMaterial({
+          color: 0x00f0ff,
+          size: 2.8,
+          transparent: true,
+          opacity: 0.65,
+          blending: THREE.AdditiveBlending
+        });
+        globalParticles = new THREE.Points(pGeo, pMat);
+        scene.add(globalParticles);
+      }
+
+      function resizeCanvases() {
+        const width = viewport.clientWidth;
+        const height = viewport.clientHeight;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        hudCanvas.width = width * dpr;
+        hudCanvas.height = height * dpr;
+
+        if (renderer && camera) {
+          renderer.setSize(width, height);
+          camera.aspect = width / height;
+          camera.updateProjectionMatrix();
+        }
+      }
+      window.addEventListener('resize', resizeCanvases);
+
+      /* --------------------------------------------------------------------------
+         HUD 2D CANVAS DRAWING (CAD Sub-Grids, Laser Plotter & Dimension Lines)
+         -------------------------------------------------------------------------- */
+      function renderHUD() {
+        const width = hudCanvas.width;
+        const height = hudCanvas.height;
+        const scale = width / 1920;
+        hudCtx.clearRect(0, 0, width, height);
+
+        const centerX = width / 2;
+        const centerY = height / 2;
+
+        /* 1. TECHNICAL BLUEPRINT DRAFTING SQUARE GRID (INTRO, MASTER BLUEPRINT & MODULE VIEWS) */
+        const showGrid = (appState === 'INTRO' && introAnimState.gridExpansion > 0) ||
+                         (appState === 'MASTER_BLUEPRINT') ||
+                         (appState === 'MODULE_DETAIL');
+
+        if (showGrid) {
+          hudCtx.save();
+          const maxDistX = width / 2;
+          const maxDistY = height / 2;
+          const isIntro = appState === 'INTRO';
+          const expansion = isIntro ? introAnimState.gridExpansion : 1.0;
+          const currentExtentX = maxDistX * expansion;
+          const currentExtentY = maxDistY * expansion;
+
+          // Subtle interactive parallax displacement when navigating blueprint
+          const offX = (!isIntro) ? (targetMouseX * 10 * scale) : 0;
+          const offY = (!isIntro) ? (targetMouseY * 7 * scale) : 0;
+          const gridCenterX = centerX + offX;
+          const gridCenterY = centerY + offY;
+
+          const gridSpacing = 60 * scale; // 60px squares
+          const pulse = introAnimState.masterGridPulse || 0;
+
+          // A. Draw Horizontal Grid Lines
+          for (let y = 0; y <= currentExtentY; y += gridSpacing) {
+            const isMajor = Math.round(y / gridSpacing) % 2 === 0;
+            const distRatio = y / maxDistY;
+            const baseAlpha = isIntro
+              ? Math.max(0, 1 - distRatio * 0.6) * 0.42
+              : Math.max(0.12, 0.44 - distRatio * 0.28) + (pulse * 0.25);
+
+            hudCtx.lineWidth = (isMajor ? 1.4 : 0.8) * scale;
+            hudCtx.strokeStyle = isMajor
+              ? `rgba(0, 240, 255, ${Math.min(0.85, baseAlpha * 1.35)})`
+              : `rgba(0, 240, 255, ${baseAlpha * 0.75})`;
+
+            // Upper line
+            hudCtx.beginPath();
+            hudCtx.moveTo(gridCenterX - currentExtentX, gridCenterY - y);
+            hudCtx.lineTo(gridCenterX + currentExtentX, gridCenterY - y);
+            hudCtx.stroke();
+
+            // Lower line (if y > 0)
+            if (y > 0) {
+              hudCtx.beginPath();
+              hudCtx.moveTo(gridCenterX - currentExtentX, gridCenterY + y);
+              hudCtx.lineTo(gridCenterX + currentExtentX, gridCenterY + y);
+              hudCtx.stroke();
+            }
+          }
+
+          // B. Draw Vertical Grid Lines
+          for (let x = 0; x <= currentExtentX; x += gridSpacing) {
+            const isMajor = Math.round(x / gridSpacing) % 2 === 0;
+            const distRatio = x / maxDistX;
+            const baseAlpha = isIntro
+              ? Math.max(0, 1 - distRatio * 0.6) * 0.42
+              : Math.max(0.12, 0.44 - distRatio * 0.28) + (pulse * 0.25);
+
+            hudCtx.lineWidth = (isMajor ? 1.4 : 0.8) * scale;
+            hudCtx.strokeStyle = isMajor
+              ? `rgba(0, 240, 255, ${Math.min(0.85, baseAlpha * 1.35)})`
+              : `rgba(0, 240, 255, ${baseAlpha * 0.75})`;
+
+            // Right line
+            hudCtx.beginPath();
+            hudCtx.moveTo(gridCenterX + x, gridCenterY - currentExtentY);
+            hudCtx.lineTo(gridCenterX + x, gridCenterY + currentExtentY);
+            hudCtx.stroke();
+
+            // Left line (if x > 0)
+            if (x > 0) {
+              hudCtx.beginPath();
+              hudCtx.moveTo(gridCenterX - x, gridCenterY - currentExtentY);
+              hudCtx.lineTo(gridCenterX - x, gridCenterY + currentExtentY);
+              hudCtx.stroke();
+            }
+          }
+
+          // C. Major Intersection Crosshairs (+) in Master Blueprint & Module Views
+          if (!isIntro || introAnimState.gridExpansion >= 0.8) {
+            const majorStep = gridSpacing * 2; // Every 120 * scale
+            const chLen = 4 * scale;
+            hudCtx.lineWidth = 1.2 * scale;
+            hudCtx.strokeStyle = `rgba(0, 240, 255, ${0.55 + pulse * 0.35})`;
+
+            for (let x = -currentExtentX + (currentExtentX % majorStep); x <= currentExtentX; x += majorStep) {
+              for (let y = -currentExtentY + (currentExtentY % majorStep); y <= currentExtentY; y += majorStep) {
+                const px = gridCenterX + x;
+                const py = gridCenterY + y;
+                if (px >= 20 * scale && px <= width - 20 * scale && py >= 20 * scale && py <= height - 20 * scale) {
+                  hudCtx.beginPath();
+                  hudCtx.moveTo(px - chLen, py);
+                  hudCtx.lineTo(px + chLen, py);
+                  hudCtx.moveTo(px, py - chLen);
+                  hudCtx.lineTo(px, py + chLen);
+                  hudCtx.stroke();
+                }
+              }
+            }
+          }
+
+          // D. Technical Margin Rulers & Graduation Ticks
+          hudCtx.strokeStyle = `rgba(0, 240, 255, ${0.45 + pulse * 0.25})`;
+          hudCtx.lineWidth = 1 * scale;
+
+          // Top & Bottom rulers
+          for (let x = 60 * scale; x <= width - 60 * scale; x += 60 * scale) {
+            const isMajor = Math.round(x / (60 * scale)) % 2 === 0;
+            const tLen = (isMajor ? 9 : 5) * scale;
+            // Top ticks
+            hudCtx.beginPath();
+            hudCtx.moveTo(x, 14 * scale);
+            hudCtx.lineTo(x, 14 * scale + tLen);
+            hudCtx.stroke();
+            // Bottom ticks
+            hudCtx.beginPath();
+            hudCtx.moveTo(x, height - 14 * scale);
+            hudCtx.lineTo(x, height - 14 * scale - tLen);
+            hudCtx.stroke();
+          }
+
+          // Left & Right rulers
+          for (let y = 60 * scale; y <= height - 60 * scale; y += 60 * scale) {
+            const isMajor = Math.round(y / (60 * scale)) % 2 === 0;
+            const tLen = (isMajor ? 9 : 5) * scale;
+            // Left ticks
+            hudCtx.beginPath();
+            hudCtx.moveTo(14 * scale, y);
+            hudCtx.lineTo(14 * scale + tLen, y);
+            hudCtx.stroke();
+            // Right ticks
+            hudCtx.beginPath();
+            hudCtx.moveTo(width - 14 * scale, y);
+            hudCtx.lineTo(width - 14 * scale - tLen, y);
+            hudCtx.stroke();
+          }
+
+          // E. Blueprint Corner Registration Marks & Technical Stamp
+          if (!isIntro) {
+            hudCtx.fillStyle = 'rgba(0, 240, 255, 0.45)';
+            hudCtx.font = `bold ${8.5 * scale}px 'JetBrains Mono', monospace`;
+            hudCtx.textAlign = 'left';
+            hudCtx.textBaseline = 'top';
+            hudCtx.fillText("CAD MATRIX // 60mm ISO-128", 22 * scale, 20 * scale);
+
+            hudCtx.textAlign = 'right';
+            hudCtx.fillText("SCALE: 1:1 DRAFTING GRID", width - 22 * scale, 20 * scale);
+
+            hudCtx.textBaseline = 'bottom';
+            hudCtx.fillText("REF: BLUEPRINT MASTER SCHEMATIC", width - 22 * scale, height - 20 * scale);
+            hudCtx.textAlign = 'left';
+            hudCtx.fillText("COORD: 37.77° N, 122.41° W", 22 * scale, height - 20 * scale);
+          }
+
+          hudCtx.restore();
+        }
+
+        /* 2. CONCENTRIC CAD COMPASS & DEGREE RETICLE */
+        if (introAnimState.compassAlpha > 0 && appState === 'INTRO') {
+          hudCtx.save();
+          hudCtx.globalAlpha = introAnimState.compassAlpha;
+          const r1 = 150 * scale;
+          const r2 = 200 * scale;
+
+          // Inner dashed circle
+          hudCtx.strokeStyle = 'rgba(0, 240, 255, 0.38)';
+          hudCtx.lineWidth = 1 * scale;
+          hudCtx.setLineDash([4 * scale, 6 * scale]);
+          hudCtx.beginPath();
+          hudCtx.arc(centerX, centerY, r1, 0, Math.PI * 2);
+          hudCtx.stroke();
+
+          // Outer dashed circle
+          hudCtx.strokeStyle = 'rgba(0, 240, 255, 0.22)';
+          hudCtx.setLineDash([2 * scale, 8 * scale]);
+          hudCtx.beginPath();
+          hudCtx.arc(centerX, centerY, r2, 0, Math.PI * 2);
+          hudCtx.stroke();
+          hudCtx.setLineDash([]);
+
+          // Degree Ticks
+          for (let deg = 0; deg < 360; deg += 30) {
+            const rad = (deg * Math.PI) / 180;
+            const isMajor = deg % 90 === 0;
+            const tickLength = (isMajor ? 14 : 7) * scale;
+            const x1 = centerX + Math.cos(rad) * (r2 - tickLength);
+            const y1 = centerY + Math.sin(rad) * (r2 - tickLength);
+            const x2 = centerX + Math.cos(rad) * r2;
+            const y2 = centerY + Math.sin(rad) * r2;
+
+            hudCtx.strokeStyle = isMajor ? 'rgba(0, 240, 255, 0.85)' : 'rgba(0, 240, 255, 0.35)';
+            hudCtx.lineWidth = (isMajor ? 1.5 : 1) * scale;
+            hudCtx.beginPath();
+            hudCtx.moveTo(x1, y1);
+            hudCtx.lineTo(x2, y2);
+            hudCtx.stroke();
+
+            if (isMajor) {
+              hudCtx.fillStyle = 'rgba(0, 240, 255, 0.85)';
+              hudCtx.font = `bold ${10 * scale}px 'JetBrains Mono', monospace`;
+              hudCtx.textAlign = 'center';
+              hudCtx.textBaseline = 'middle';
+              const tx = centerX + Math.cos(rad) * (r2 + 18 * scale);
+              const ty = centerY + Math.sin(rad) * (r2 + 18 * scale);
+              hudCtx.fillText(`${deg}°`, tx, ty);
+            }
+          }
+          hudCtx.restore();
+        }
+
+        /* 3. LASER CROSSHAIR SWEEP */
+        if (introAnimState.laserAlpha > 0 && appState === 'INTRO') {
+          hudCtx.save();
+          const sweepX = width * introAnimState.laserSweepX;
+
+          const grad = hudCtx.createLinearGradient(sweepX - 30 * scale, 0, sweepX + 30 * scale, 0);
+          grad.addColorStop(0, 'rgba(0, 240, 255, 0)');
+          grad.addColorStop(0.5, `rgba(0, 240, 255, ${introAnimState.laserAlpha * 0.85})`);
+          grad.addColorStop(1, 'rgba(0, 240, 255, 0)');
+
+          hudCtx.fillStyle = grad;
+          hudCtx.fillRect(sweepX - 25 * scale, 0, 50 * scale, height);
+
+          hudCtx.strokeStyle = `rgba(255, 255, 255, ${introAnimState.laserAlpha})`;
+          hudCtx.lineWidth = 1.8 * scale;
+          hudCtx.beginPath();
+          hudCtx.moveTo(sweepX, 0);
+          hudCtx.lineTo(sweepX, height);
+          hudCtx.stroke();
+
+          hudCtx.strokeStyle = `rgba(0, 240, 255, ${introAnimState.laserAlpha})`;
+          hudCtx.lineWidth = 1.5 * scale;
+          hudCtx.beginPath();
+          hudCtx.arc(sweepX, centerY, 36 * scale, 0, Math.PI * 2);
+          hudCtx.stroke();
+
+          hudCtx.restore();
+        }
+
+        /* 4. DRAFTING DIMENSION LEADER ARROWS */
+        if (introAnimState.dimensionAlpha > 0 && appState === 'INTRO') {
+          hudCtx.save();
+          hudCtx.globalAlpha = introAnimState.dimensionAlpha;
+
+          const dimWidth = 460 * scale;
+          const dimY = centerY - 150 * scale;
+
+          hudCtx.strokeStyle = '#00f0ff';
+          hudCtx.lineWidth = 1.2 * scale;
+
+          hudCtx.beginPath();
+          hudCtx.moveTo(centerX - dimWidth / 2, dimY);
+          hudCtx.lineTo(centerX + dimWidth / 2, dimY);
+          hudCtx.stroke();
+
+          // End ticks
+          hudCtx.beginPath();
+          hudCtx.moveTo(centerX - dimWidth / 2, dimY - 8 * scale);
+          hudCtx.lineTo(centerX - dimWidth / 2, dimY + 8 * scale);
+          hudCtx.moveTo(centerX + dimWidth / 2, dimY - 8 * scale);
+          hudCtx.lineTo(centerX + dimWidth / 2, dimY + 8 * scale);
+          hudCtx.stroke();
+
+          hudCtx.fillStyle = '#00f0ff';
+          hudCtx.font = `bold ${11 * scale}px 'JetBrains Mono', monospace`;
+          hudCtx.textAlign = 'center';
+          hudCtx.fillText(`◄  SPEC_WIDTH: 840.00 mm (±0.005)  ►`, centerX, dimY - 8 * scale);
+
+          // Vertical dimension on left side
+          const dimHeight = 240 * scale;
+          const dimX = centerX - 260 * scale;
+          hudCtx.beginPath();
+          hudCtx.moveTo(dimX, centerY - dimHeight / 2);
+          hudCtx.lineTo(dimX, centerY + dimHeight / 2);
+          hudCtx.moveTo(dimX - 8 * scale, centerY - dimHeight / 2);
+          hudCtx.lineTo(dimX + 8 * scale, centerY - dimHeight / 2);
+          hudCtx.moveTo(dimX - 8 * scale, centerY + dimHeight / 2);
+          hudCtx.lineTo(dimX + 8 * scale, centerY + dimHeight / 2);
+          hudCtx.stroke();
+
+          hudCtx.save();
+          hudCtx.translate(dimX - 12 * scale, centerY);
+          hudCtx.rotate(-Math.PI / 2);
+          hudCtx.textAlign = 'center';
+          hudCtx.fillText(`◄ CORE_ELEV: 480.00 mm ►`, 0, 0);
+          hudCtx.restore();
+
+          hudCtx.restore();
+        }
+
+        /* 5. HORIZONTAL CONVERGENCE LASER BEAM & BLOOM FLARE (AT CLIMAX) */
+        if (introAnimState.centerLockPulse > 0 && appState === 'INTRO') {
+          hudCtx.save();
+          hudCtx.globalAlpha = introAnimState.centerLockPulse;
+
+          // Horizontal Beam
+          const beamH = 3 * scale;
+          const beamGrad = hudCtx.createRadialGradient(centerX, centerY, 0, centerX, centerY, width / 2);
+          beamGrad.addColorStop(0, '#ffffff');
+          beamGrad.addColorStop(0.3, '#00f0ff');
+          beamGrad.addColorStop(0.8, 'rgba(0, 240, 255, 0.4)');
+          beamGrad.addColorStop(1, 'transparent');
+
+          hudCtx.fillStyle = beamGrad;
+          hudCtx.fillRect(0, centerY - beamH / 2, width, beamH);
+
+          // Center Lens Flare
+          const flareGrad = hudCtx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 120 * scale);
+          flareGrad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+          flareGrad.addColorStop(0.3, 'rgba(0, 240, 255, 0.7)');
+          flareGrad.addColorStop(0.7, 'rgba(0, 240, 255, 0.2)');
+          flareGrad.addColorStop(1, 'transparent');
+
+          hudCtx.fillStyle = flareGrad;
+          hudCtx.beginPath();
+          hudCtx.arc(centerX, centerY, 120 * scale, 0, Math.PI * 2);
+          hudCtx.fill();
+
+          hudCtx.restore();
+        }
+
+        /* 6. ACTIVE 3D SPATIAL NODE CAD TRACKING RETICLE & 3D MINDMAP BRANCH OVERLAY */
+        if (appState === 'MODULE_DETAIL' && spatialModulesGroup && spatialModulesGroup.children[activeModuleIndex]) {
+          const targetMesh = spatialModulesGroup.children[activeModuleIndex];
+          const worldPos = new THREE.Vector3();
+          targetMesh.getWorldPosition(worldPos);
+
+          const screenPos = worldPos.clone().project(camera);
+          const screenX = (screenPos.x * 0.5 + 0.5) * width;
+          const screenY = (-(screenPos.y * 0.5) + 0.5) * height;
+
+          // Render Mindmap Sub-Nodes & Synaptic Laser Branch Overlay
+          if (mindmapSubNodes && mindmapSubNodes[activeModuleIndex]) {
+            const subList = mindmapSubNodes[activeModuleIndex];
+
+            // 1. Draw Mindmap Branch Lines between Parent Hub & all 4 Sub-Nodes
+            subList.forEach((subObj, sIdx) => {
+              const subWorldPos = new THREE.Vector3();
+              subObj.group.getWorldPosition(subWorldPos);
+              const subScreen = subWorldPos.project(camera);
+
+              if (subScreen.z < 1) {
+                const sx = (subScreen.x * 0.5 + 0.5) * width;
+                const sy = (-(subScreen.y * 0.5) + 0.5) * height;
+                const isActive = (sIdx === activeSubjectIndex);
+
+                hudCtx.save();
+                // Branch Line
+                hudCtx.strokeStyle = isActive ? 'rgba(0, 240, 255, 0.85)' : 'rgba(0, 240, 255, 0.22)';
+                hudCtx.lineWidth = (isActive ? 2 : 1) * scale;
+                if (!isActive) hudCtx.setLineDash([3 * scale, 5 * scale]);
+
+                hudCtx.beginPath();
+                hudCtx.moveTo(screenX, screenY);
+                hudCtx.lineTo(sx, sy);
+                hudCtx.stroke();
+                hudCtx.setLineDash([]);
+
+                // Animated energy data packet traveling along the active branch line
+                if (isActive) {
+                  const t = (Date.now() % 1100) / 1100;
+                  const bx = screenX + (sx - screenX) * t;
+                  const by = screenY + (sy - screenY) * t;
+
+                  hudCtx.fillStyle = '#ffffff';
+                  hudCtx.shadowColor = '#00f0ff';
+                  hudCtx.shadowBlur = 10 * scale;
+                  hudCtx.beginPath();
+                  hudCtx.arc(bx, by, 3.5 * scale, 0, Math.PI * 2);
+                  hudCtx.fill();
+                  hudCtx.shadowBlur = 0;
+                }
+
+                // Sub-node Reticle
+                if (!isActive) {
+                  // Inactive sub-node indicator
+                  hudCtx.strokeStyle = 'rgba(0, 240, 255, 0.45)';
+                  hudCtx.lineWidth = 1 * scale;
+                  hudCtx.beginPath();
+                  hudCtx.arc(sx, sy, 10 * scale, 0, Math.PI * 2);
+                  hudCtx.stroke();
+
+                  hudCtx.fillStyle = 'rgba(140, 220, 255, 0.85)';
+                  hudCtx.font = `bold ${8 * scale}px 'JetBrains Mono', monospace`;
+                  hudCtx.textAlign = 'center';
+                  hudCtx.fillText(`L${sIdx + 1}`, sx, sy + 3 * scale);
+                } else {
+                  // MAJOR TARGET RETICLE ON ACTIVE SUB-NODE
+                  const currentGlitchScale = (reticleGlitch && reticleGlitch.scale) || 1.0;
+                  const rx = sx;
+                  const ry = sy;
+                  const reticleSize = 42 * scale * currentGlitchScale;
+                  const bLen = 11 * scale;
+
+                  // Reticle Brackets (Clean CAD cyan)
+                  hudCtx.strokeStyle = 'rgba(0, 240, 255, 0.75)';
+                  hudCtx.lineWidth = 1.4 * scale;
+
+                  // Top-left
+                  hudCtx.beginPath();
+                  hudCtx.moveTo(rx - reticleSize, ry - reticleSize + bLen);
+                  hudCtx.lineTo(rx - reticleSize, ry - reticleSize);
+                  hudCtx.lineTo(rx - reticleSize + bLen, ry - reticleSize);
+                  hudCtx.stroke();
+
+                  // Top-right
+                  hudCtx.beginPath();
+                  hudCtx.moveTo(rx + reticleSize - bLen, ry - reticleSize);
+                  hudCtx.lineTo(rx + reticleSize, ry - reticleSize);
+                  hudCtx.lineTo(rx + reticleSize, ry - reticleSize + bLen);
+                  hudCtx.stroke();
+
+                  // Bottom-left
+                  hudCtx.beginPath();
+                  hudCtx.moveTo(rx - reticleSize, ry + reticleSize - bLen);
+                  hudCtx.lineTo(rx - reticleSize, ry + reticleSize);
+                  hudCtx.lineTo(rx - reticleSize + bLen, ry + reticleSize);
+                  hudCtx.stroke();
+
+                  // Bottom-right
+                  hudCtx.beginPath();
+                  hudCtx.moveTo(rx + reticleSize - bLen, ry + reticleSize);
+                  hudCtx.lineTo(rx + reticleSize, ry + reticleSize);
+                  hudCtx.lineTo(rx + reticleSize, ry + reticleSize - bLen);
+                  hudCtx.stroke();
+
+                  // Center crosshair with micro-ticks
+                  hudCtx.strokeStyle = isGlitching ? '#00f0ff' : 'rgba(245, 158, 11, 0.9)';
+                  hudCtx.lineWidth = 1.2 * scale;
+                  hudCtx.beginPath();
+                  hudCtx.moveTo(rx - 8 * scale, ry);
+                  hudCtx.lineTo(rx + 8 * scale, ry);
+                  hudCtx.moveTo(rx, ry - 8 * scale);
+                  hudCtx.lineTo(rx, ry + 8 * scale);
+                  hudCtx.stroke();
+
+                  // Scanning ring
+                  const pulse = (Math.sin(Date.now() * 0.005) + 1) * 0.5;
+                  hudCtx.strokeStyle = isGlitching ? 'rgba(0, 240, 255, 0.95)' : `rgba(0, 240, 255, ${0.3 + pulse * 0.4})`;
+                  hudCtx.setLineDash([4 * scale, 4 * scale]);
+                  hudCtx.beginPath();
+                  hudCtx.arc(rx, ry, reticleSize + 10 * scale + pulse * 6 * scale, 0, Math.PI * 2);
+                  hudCtx.stroke();
+                  hudCtx.setLineDash([]);
+
+                  // Telemetry Status Label
+                  hudCtx.fillStyle = isGlitching ? '#ffffff' : '#00f0ff';
+                  hudCtx.font = `bold ${9 * scale}px 'JetBrains Mono', monospace`;
+                  hudCtx.textAlign = 'center';
+                  const reticleText = isGlitching
+                    ? `[ SPATIAL TELEMETRY // ACTIVE NODE SCAN: LOCK-ON ENGAGED ]`
+                    : `[ SPATIAL TELEMETRY // TOPIC 0${activeSubjectIndex + 1} CORE LOCKED ]`;
+                  hudCtx.fillText(reticleText, rx, ry + reticleSize + 18 * scale);
+                }
+
+                hudCtx.restore();
+              }
+            });
+          }
+        }
+      }
+
+      /* --------------------------------------------------------------------------
+         SCRAMBLE TEXT DECRYPTION
+         -------------------------------------------------------------------------- */
+      const glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!<>-_\\/[]{}—=+*^?#________';
+
+      function scrambleText(element, targetText, duration = 1.4, onComplete = null) {
+        let frame = 0;
+        const totalFrames = Math.round(duration * 60);
+        const length = targetText.length;
+        let lastResolved = -1;
+
+        function update() {
+          let output = '';
+          const progress = frame / totalFrames;
+          const resolvedChars = Math.floor(progress * length);
+
+          // Keyboard typing clack on each character revealed
+          if (resolvedChars > lastResolved && resolvedChars <= length) {
+            const charTyped = targetText[resolvedChars - 1];
+            const isSpace = charTyped === ' ' || resolvedChars === length;
+            soundFX.playKeyboardKey(isSpace);
+            lastResolved = resolvedChars;
+          } else if (frame % 4 === 0 && resolvedChars < length) {
+            // Subtle cipher scramble micro-keystroke
+            soundFX.playKeyboardScrambleTick();
+          }
+
+          for (let i = 0; i < length; i++) {
+            if (i < resolvedChars) {
+              output += targetText[i];
+            } else {
+              output += glyphs[Math.floor(Math.random() * glyphs.length)];
+            }
+          }
+
+          element.innerText = output;
+          frame++;
+
+          if (frame <= totalFrames) {
+            requestAnimationFrame(update);
+          } else {
+            element.innerText = targetText;
+            soundFX.playKeyboardKey(true); // Final return / latch keystroke
+            if (onComplete) onComplete();
+          }
+        }
+
+        requestAnimationFrame(update);
+      }
+
+      /* --------------------------------------------------------------------------
+         CINEMATIC INTRO TIMELINE (GSAP)
+         -------------------------------------------------------------------------- */
+      let introTimeline;
+
+      function runIntroSequence() {
+        if (introTimeline) introTimeline.kill();
+
+        // Ensure audio context is initialized and attempt immediate resume on load
+        soundFX.init();
+        if (soundFX.ctx) {
+          if (soundFX.ctx.state === 'running') {
+            soundFX.hasPlayedIntroAudio = true;
+            if (audioGestureHint) audioGestureHint.style.display = 'none';
+          } else if (soundFX.ctx.state === 'suspended') {
+            soundFX.ctx.resume().then(() => {
+              soundFX.isUnlocked = true;
+              soundFX.hasPlayedIntroAudio = true;
+              if (audioGestureHint) audioGestureHint.style.display = 'none';
+              updateAudioUI();
+            }).catch(() => {
+              if (audioGestureHint && !soundFX.hasPlayedIntroAudio) {
+                audioGestureHint.style.display = 'flex';
+              }
+            });
+          }
+        }
+
+        appState = 'INTRO';
+        introScreenLayer.classList.remove('hidden');
+        blueprintMasterLayer.classList.remove('active');
+        moduleDetailModal.classList.remove('active');
+
+        // CRITICAL: Ensure Ekansh's Life is NOT visible at the beginning!
+        heroTitle.innerText = '';
+        heroSubtitle.innerText = '';
+        cadTitleFrame.classList.remove('active');
+        titleLockBadge.classList.remove('visible');
+        heroDividerRule.classList.remove('expanded');
+        heroSubtitle.classList.remove('visible');
+        heroSpecsPill.classList.remove('visible');
+        blueprintBtnContainer.classList.remove('visible');
+
+        // Reset and display central calibration HUD
+        introCalibrationHud.classList.remove('hidden');
+        calStatusBadge.innerText = 'INITIALIZING';
+        calStatusBadge.style.color = 'var(--amber-warm)';
+        calProgressBar.style.width = '0%';
+        calPercentVal.innerText = '0%';
+        calStatusLabel.innerText = 'CAD SCHEMATIC CALIBRATION IN PROGRESS';
+
+        telLines.forEach(l => l.classList.remove('active'));
+
+        introAnimState.gridExpansion = 0;
+        introAnimState.laserSweepX = -0.2;
+        introAnimState.laserAlpha = 0;
+        introAnimState.dimensionAlpha = 0;
+        introAnimState.compassAlpha = 0;
+        introAnimState.centerLockPulse = 0;
+        introAnimState.calProgress = 0;
+        introAnimState.cameraZ = 340;
+
+        // Reset camera in a slightly tighter dramatic perspective
+        camera.position.set(0, 16, 340);
+        camLookAtTarget.set(0, 0, 0);
+
+        introTimeline = gsap.timeline({ paused: false });
+
+        // 0.0s: Atmospheric sub-bass drone sweep and schematic calibration loading sound
+        introTimeline.add(() => {
+          soundFX.playBootDrone(3.2);
+          soundFX.playCalibrationLoadingSound(3.8); // High-tech loading sound effect
+        }, 0.0);
+
+        // Camera smoothly dollies out as the core assembles
+        introTimeline.to(camera.position, {
+          z: 420,
+          y: 10,
+          duration: 4.5,
+          ease: "power2.out"
+        }, 0.0);
+
+        // 0.0s - 1.8s: Sub-grid expansion
+        introTimeline.to(introAnimState, {
+          gridExpansion: 1.0,
+          duration: 1.8,
+          ease: "power2.out"
+        }, 0.0);
+
+        // Concentric compass and protractor reticle appears
+        introTimeline.to(introAnimState, {
+          compassAlpha: 1.0,
+          duration: 1.4,
+          ease: "power2.out"
+        }, 0.2);
+
+        // Calibration progress bar: 0% -> 45%
+        introTimeline.to(introAnimState, {
+          calProgress: 45,
+          duration: 1.6,
+          ease: "power1.inOut"
+        }, 0.0);
+
+        // Laser Crosshair Sweep: glowing bar slides across screen with spatial whoosh sound
+        introTimeline.to(introAnimState, {
+          laserAlpha: 1.0,
+          duration: 0.2,
+          ease: "power1.in"
+        }, 0.3);
+
+        introTimeline.add(() => {
+          soundFX.playGlowBarSweepWhoosh(1.6); // Whoosh as the glow bar slides across the screen
+        }, 0.3);
+
+        introTimeline.to(introAnimState, {
+          laserSweepX: 1.2,
+          duration: 1.6,
+          ease: "power2.inOut"
+        }, 0.3);
+
+        introTimeline.to(introAnimState, {
+          laserAlpha: 0.0,
+          duration: 0.3,
+          ease: "power1.out"
+        }, 1.7);
+
+        // Periodic digital data-load chirps as calibration progresses
+        introTimeline.add(() => soundFX.playDataLoadChirp(1650), 0.7);
+        introTimeline.add(() => soundFX.playDataLoadChirp(1900), 1.3);
+        introTimeline.add(() => soundFX.playDataLoadChirp(2150), 2.2);
+        introTimeline.add(() => soundFX.playDataLoadChirp(2400), 3.0);
+
+        // Telemetry lines typing out with high-tech digital relay clicks
+        introTimeline.add(() => {
+          telLines[0].classList.add('active');
+          soundFX.playRelayClick(1600);
+        }, 0.2);
+        introTimeline.add(() => {
+          telLines[1].classList.add('active');
+          soundFX.playRelayClick(1750);
+        }, 0.6);
+        introTimeline.add(() => {
+          telLines[2].classList.add('active');
+          soundFX.playRelayClick(1900);
+        }, 1.1);
+        introTimeline.add(() => {
+          telLines[3].classList.add('active');
+          soundFX.playRelayClick(2050);
+        }, 1.6);
+
+        // 1.8s - 3.8s: Dimension lines appear & Calibration nears 100%
+        introTimeline.to(introAnimState, {
+          dimensionAlpha: 1.0,
+          duration: 0.8,
+          ease: "power2.out"
+        }, 2.0);
+
+        introTimeline.add(() => {
+          soundFX.playRelayClick(2200);
+        }, 2.0);
+
+        introTimeline.to(introAnimState, {
+          calProgress: 98,
+          duration: 2.0,
+          ease: "power1.inOut"
+        }, 1.8);
+
+        introTimeline.add(() => {
+          soundFX.playCadBeep(2100);
+        }, 2.6);
+
+        // 3.8s: Calibration hits 100% and locks on
+        introTimeline.to(introAnimState, {
+          calProgress: 100,
+          duration: 0.4,
+          ease: "power2.out"
+        }, 3.8);
+
+        introTimeline.add(() => {
+          calStatusLabel.innerText = 'SCHEMATIC CALIBRATION COMPLETE // LOCK VERIFIED';
+          calStatusBadge.innerText = '100% LOCKED';
+          calStatusBadge.style.color = 'var(--cyan-laser)';
+          soundFX.playCadBeep(2800);
+        }, 4.1);
+
+        // 4.3s - 4.8s: Convergence lock-on flash, fade calibration HUD
+        introTimeline.add(() => {
+          introCalibrationHud.classList.add('hidden');
+          soundFX.playServoWhoosh();
+          soundFX.playOpticLatch(2200);
+        }, 4.4);
+
+        introTimeline.to(introAnimState, {
+          centerLockPulse: 1.0,
+          duration: 0.25,
+          ease: "power2.in"
+        }, 4.4);
+
+        introTimeline.to(introAnimState, {
+          centerLockPulse: 0.0,
+          duration: 0.4,
+          ease: "power2.out"
+        }, 4.65);
+
+        // 4.8s: NOW, AND ONLY AFTER THE ANIMATION, REVEAL "EKANSH'S LIFE"
+        introTimeline.add(() => {
+          cadTitleFrame.classList.add('active');
+          titleLockBadge.classList.add('visible');
+        }, 4.8);
+
+        introTimeline.add(() => {
+          scrambleText(heroTitle, "EKANSH'S LIFE", 1.4, () => {
+            heroTitle.style.textShadow = '0 0 35px #00f0ff, 0 0 70px #00f0ff, 0 0 100px rgba(0, 240, 255, 0.9)';
+            heroDividerRule.classList.add('expanded');
+            setTimeout(() => {
+              heroTitle.style.textShadow = '0 0 12px rgba(0, 240, 255, 0.85), 0 0 30px rgba(0, 240, 255, 0.55), 0 0 60px rgba(0, 240, 255, 0.35)';
+            }, 450);
+          });
+        }, 5.0);
+
+        // 5.8s: Subtitle appears & decrypts
+        introTimeline.add(() => {
+          heroSubtitle.classList.add('visible');
+          scrambleText(heroSubtitle, "ENGINEERING & INNOVATION", 1.0);
+        }, 5.8);
+
+        // 6.4s: Specs pill appears
+        introTimeline.add(() => {
+          heroSpecsPill.classList.add('visible');
+        }, 6.4);
+
+        // 7.0s: "VIEW BLUEPRINT [→]" button smoothly fades in directly beneath
+        introTimeline.add(() => {
+          blueprintBtnContainer.classList.add('visible');
+        }, 7.0);
+      }
+
+      /* --------------------------------------------------------------------------
+         VIEW BLUEPRINT BUTTON TRANSITION -> MASTER BLUEPRINT VIEW
+         -------------------------------------------------------------------------- */
+      viewBlueprintBtn.addEventListener('click', () => {
+        soundFX.unlock();
+        soundFX.playServoWhoosh();
+        soundFX.playOpticLatch(2400);
+        soundFX.playDataLoadChirp(1800);
+        appState = 'MASTER_BLUEPRINT';
+
+        // Pulse the blueprint background square grid with luminous cyan radiance!
+        gsap.fromTo(introAnimState,
+          { masterGridPulse: 1.0 },
+          { masterGridPulse: 0.0, duration: 1.4, ease: "power2.out" }
+        );
+
+        if (perspectiveGridTunnel) {
+          gsap.fromTo(perspectiveGridTunnel.uniforms.uSpeed,
+            { value: 110.0 },
+            { value: 36.0, duration: 1.8, ease: "power2.out" }
+          );
+        }
+
+        // 1. Fade out Intro Screen Layer
+        introScreenLayer.classList.add('hidden');
+
+        // 2. 3D Camera sweeps back into panoramic blueprint perspective
+        gsap.to(camera.position, {
+          x: 0,
+          y: 80,
+          z: 620,
+          duration: 1.8,
+          ease: "power3.inOut"
+        });
+
+        gsap.to(camLookAtTarget, {
+          x: 0,
+          y: 0,
+          z: 0,
+          duration: 1.8,
+          ease: "power3.inOut"
+        });
+
+        // 3. Fade in Master Blueprint Layer with the 5 Interactive Event Boxes
+        setTimeout(() => {
+          blueprintMasterLayer.classList.add('active');
+        }, 400);
+      });
+
+      backToIntroBtn.addEventListener('click', () => {
+        soundFX.unlock();
+        soundFX.playServoWhoosh();
+        soundFX.playOpticLatch(2000);
+        runIntroSequence();
+      });
+
+      replayIntroBtn.addEventListener('click', () => {
+        soundFX.unlock();
+        soundFX.playServoWhoosh();
+        soundFX.playOpticLatch(2000);
+        runIntroSequence();
+      });
+
+      /* --------------------------------------------------------------------------
+         CLICKING A BLUEPRINT EVENT BOX -> SMOOTH ZOOM TRANSITION INTO MODULE
+         -------------------------------------------------------------------------- */
+      let activeSubjectIndex = 0;
+      let topicModuleIndices = [0, 0, 0, 0];
+      let isTransitioning = false;
+
+      function renderBulletPoints(currentSubject) {
+        if (!currentSubject) return;
+        if (bulletActiveIcon) bulletActiveIcon.innerText = '';
+        bulletActiveSubjectTitle.innerText = currentSubject.name.toUpperCase();
+        bulletCountBadge.innerText = `${currentSubject.points.length} POINTS`;
+
+        notesContentContainer.innerHTML = '';
+        currentSubject.points.forEach((pt) => {
+          const card = document.createElement('div');
+          card.className = 'note-card';
+          card.innerHTML = `
+            <div class="note-header">
+              <span class="note-bullet">▸</span>
+              <span class="note-title">${pt.title}</span>
+            </div>
+            <div class="note-desc">${pt.desc}</div>
+          `;
+          card.addEventListener('mouseenter', () => soundFX.playHoverChirp(1550));
+          notesContentContainer.appendChild(card);
+        });
+      }
+
+      function updateSubjectBox(idx) {
+        const box = subjectBoxesGrid.querySelector(`.liquid-subject-box[data-topic-index="${idx}"]`);
+        if (!box) return;
+        const mIdx = topicModuleIndices[idx] !== undefined ? topicModuleIndices[idx] : activeModuleIndex;
+        const mod = MODULE_DATA[mIdx];
+        const subj = mod.subjects[idx];
+
+        const stageSpan = box.querySelector('.subj-box-stage');
+        if (stageSpan) stageSpan.innerText = `SEC 0${mIdx + 1}`;
+
+        const titleEl = box.querySelector('.subj-box-title');
+        if (titleEl) {
+          gsap.fromTo(titleEl,
+            { opacity: 0, y: -4 },
+            { opacity: 1, y: 0, duration: 0.28, ease: "power2.out" }
+          );
+          titleEl.innerText = subj.name;
+        }
+
+        const cuePoints = box.querySelector('.subj-box-cue span:first-child');
+        if (cuePoints) cuePoints.innerText = `${subj.points.length} POINTS`;
+
+        const pips = box.querySelectorAll('.depth-pip');
+        pips.forEach((pip, pIdx) => {
+          if (pIdx <= mIdx) pip.classList.add('active');
+          else pip.classList.remove('active');
+        });
+      }
+
+      function renderSubjectBoxes() {
+        subjectBoxesGrid.innerHTML = '';
+        for (let idx = 0; idx < 4; idx++) {
+          const mIdx = topicModuleIndices[idx] !== undefined ? topicModuleIndices[idx] : activeModuleIndex;
+          const mod = MODULE_DATA[mIdx];
+          const subj = mod.subjects[idx];
+          const box = document.createElement('div');
+          box.className = `liquid-subject-box ${idx === activeSubjectIndex ? 'active-box' : ''}`;
+          box.setAttribute('data-topic-index', idx);
+          box.innerHTML = `
+            <div class="subj-box-top">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span class="subj-box-code">[TOPIC 0${idx + 1}]</span>
+                <span class="subj-box-stage" style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--gold-amber); opacity: 0.85;">SEC 0${mIdx + 1}</span>
+              </div>
+              <div class="depth-pip-meter" title="Stage 0${mIdx + 1} of 05">
+                <span class="depth-pip ${mIdx >= 0 ? 'active' : ''}"></span>
+                <span class="depth-pip ${mIdx >= 1 ? 'active' : ''}"></span>
+                <span class="depth-pip ${mIdx >= 2 ? 'active' : ''}"></span>
+                <span class="depth-pip ${mIdx >= 3 ? 'active' : ''}"></span>
+                <span class="depth-pip ${mIdx >= 4 ? 'active' : ''}"></span>
+              </div>
+            </div>
+            <div class="subj-box-title">${subj.name}</div>
+            <div class="subj-box-cue">
+              <span>${subj.points.length} POINTS</span>
+              <span>${idx === activeSubjectIndex ? '● ACTIVE CORE' : 'DIVE DEEPER →'}</span>
+            </div>
+          `;
+
+          box.addEventListener('mouseenter', () => soundFX.playHoverChirp(1480));
+          box.addEventListener('click', () => {
+            if (isTransitioning) return;
+            diveIntoNode(idx);
+          });
+
+          subjectBoxesGrid.appendChild(box);
+        }
+      }
+
+      /* --------------------------------------------------------------------------
+         SYNCHRONIZED 3D CAMERA DIVE & STRUCTURAL CORE UNFOLDING (GSAP)
+         -------------------------------------------------------------------------- */
+      let diveDelayedCall = null;
+
+      function diveIntoNode(topicIndex) {
+        if (topicIndex < 0 || topicIndex >= 4) return;
+
+        activeSubjectIndex = topicIndex;
+        activeModuleIndex = topicModuleIndices[topicIndex] !== undefined ? topicModuleIndices[topicIndex] : activeModuleIndex;
+
+        if (!spatialModulesGroup || !spatialModulesGroup.children[activeModuleIndex]) return;
+
+        soundFX.unlock();
+        soundFX.playDeepDiveWhoosh();
+        soundFX.playOpticLatch(2500);
+        soundFX.playDataLoadChirp(1950);
+
+        isTransitioning = true;
+
+        const mod = MODULE_DATA[activeModuleIndex];
+        const currentSubject = mod.subjects[topicIndex];
+        const subList = mindmapSubNodes[activeModuleIndex];
+        const targetSubObj = subList ? subList[topicIndex] : null;
+
+        // Sync header indicators to match this highlighted topic's current stage
+        modalModuleTag.innerText = mod.tag;
+        modalHeading.innerText = mod.title;
+        modalPageCounter.innerText = `MODULE 0${activeModuleIndex + 1} / 05`;
+        if (breadcrumbModule) {
+          breadcrumbModule.innerText = mod.tag.split(' ')[0];
+        }
+
+        // 1. UI: Immediate Tactile Feedback on Active Topic Tab
+        const allTabs = subjectBoxesGrid.querySelectorAll('.liquid-subject-box');
+        allTabs.forEach((box, i) => {
+          const cueSpan = box.querySelector('.subj-box-cue span:last-child');
+          if (i === topicIndex) {
+            box.classList.add('active-box');
+            box.classList.add('diving-pulse');
+            if (cueSpan) cueSpan.innerText = '● DIVING INTO CORE...';
+          } else {
+            box.classList.remove('active-box');
+            box.classList.remove('diving-pulse');
+            if (cueSpan) cueSpan.innerText = 'DIVE DEEPER →';
+          }
+        });
+
+        // Update Breadcrumb & Status Pill
+        if (breadcrumbDepthBadge) {
+          breadcrumbDepthBadge.innerText = 'DEPTH: LEVEL 0' + (topicIndex + 1);
+        }
+        transitionStatusText.innerText = 'DIVING INTO CORE // TOPIC 0' + (topicIndex + 1) + '...';
+        transitionStatusPill.style.borderColor = 'var(--cyan-laser)';
+        transitionStatusPill.style.color = '#ffffff';
+
+        // 2. UI: Immediately Fade Out All UI Elements (Header, Subject Boxes, Bullet Panel)
+        // Leaving the 3D viewport 100% clean and unobstructed during the spatial transition
+        if (liquidHeaderBar) {
+          gsap.to(liquidHeaderBar, {
+            opacity: 0,
+            y: -24,
+            duration: 0.25,
+            ease: "power2.in",
+            pointerEvents: "none",
+            overwrite: "auto"
+          });
+        }
+
+        if (subjectBoxesContainer) {
+          gsap.to(subjectBoxesContainer, {
+            opacity: 0,
+            y: -20,
+            duration: 0.25,
+            ease: "power2.in",
+            pointerEvents: "none",
+            overwrite: "auto"
+          });
+        }
+
+        gsap.to(liquidBulletPanel, {
+          opacity: 0,
+          y: 20,
+          scale: 0.96,
+          duration: 0.25,
+          ease: "power2.in",
+          pointerEvents: "none",
+          overwrite: "auto"
+        });
+
+        // 3. Compute 3D Coordinates (Offset so model sits in clear right viewport, away from left text panel)
+        const targetWorldX = targetSubObj ? targetSubObj.worldX : (spatialModulesGroup.children[activeModuleIndex].position.x + MINDMAP_OFFSETS[topicIndex].x);
+        const targetWorldY = targetSubObj ? targetSubObj.worldY : (spatialModulesGroup.children[activeModuleIndex].position.y + MINDMAP_OFFSETS[topicIndex].y);
+        const targetWorldZ = targetSubObj ? targetSubObj.worldZ : (spatialModulesGroup.children[activeModuleIndex].position.z + MINDMAP_OFFSETS[topicIndex].z);
+
+        // Comfortable distance & camera offset placing 3D node cleanly on the right
+        const targetCamX = targetWorldX - 20;
+        const targetCamY = targetWorldY + 3;
+        const targetCamZ = targetWorldZ + 68;
+
+        const lookAtX = targetWorldX - 20;
+        const lookAtY = targetWorldY;
+        const lookAtZ = targetWorldZ;
+
+        // 4. Smooth, gradual 3D Camera GSAP Dolly-In (1.8s, power2.out)
+        gsap.to(camera.position, {
+          x: targetCamX,
+          y: targetCamY,
+          z: targetCamZ,
+          duration: 1.8,
+          ease: "power2.out",
+          overwrite: "auto"
+        });
+
+        gsap.to(camLookAtTarget, {
+          x: lookAtX,
+          y: lookAtY,
+          z: lookAtZ,
+          duration: 1.8,
+          ease: "power2.out",
+          overwrite: "auto"
+        });
+
+        // 5. Keep steady FOV and normal particle speed (No jarring warp)
+        introAnimState.warpSpeed = 1.0;
+
+        if (perspectiveGridTunnel) {
+          gsap.to(perspectiveGridTunnel.uniforms.uSpeed, {
+            value: 58.0,
+            duration: 0.8,
+            yoyo: true,
+            repeat: 1,
+            ease: "power2.inOut",
+            overwrite: "auto"
+          });
+        }
+
+        // 6. Gentle, subtle lattice unfolding without huge ballooning lines
+        if (subList) {
+          subList.forEach((subObj, sIdx) => {
+            if (sIdx === topicIndex) {
+              gsap.to(subObj.outerLattice.scale, {
+                x: 1.15,
+                y: 1.15,
+                z: 1.15,
+                duration: 1.8,
+                ease: "power2.out",
+                overwrite: "auto"
+              });
+              gsap.to(subObj.concentricRing1.position, {
+                z: -6,
+                duration: 1.8,
+                ease: "power2.out",
+                overwrite: "auto"
+              });
+              gsap.to(subObj.concentricRing2.position, {
+                z: 6,
+                duration: 1.8,
+                ease: "power2.out",
+                overwrite: "auto"
+              });
+            } else {
+              gsap.to(subObj.outerLattice.scale, {
+                x: 1.0,
+                y: 1.0,
+                z: 1.0,
+                duration: 0.8,
+                ease: "power2.out",
+                overwrite: "auto"
+              });
+              gsap.to(subObj.concentricRing1.position, {
+                z: 0,
+                duration: 0.8,
+                ease: "power2.out",
+                overwrite: "auto"
+              });
+              gsap.to(subObj.concentricRing2.position, {
+                z: 0,
+                duration: 0.8,
+                ease: "power2.out",
+                overwrite: "auto"
+              });
+              gsap.to(subObj.innerCore.scale, {
+                x: 1.0,
+                y: 1.0,
+                z: 1.0,
+                duration: 0.8,
+                ease: "power2.out",
+                overwrite: "auto"
+              });
+              subObj.coreWire.material.color.setHex(0x00f0ff);
+              subObj.nucleus.material.color.setHex(0xf59e0b);
+            }
+          });
+        }
+
+        // 7. Core Arrival, Reticle Settle & Text Panel Glide-In
+        if (diveDelayedCall) diveDelayedCall.kill();
+
+        diveDelayedCall = gsap.delayedCall(0.9, () => {
+          // Subtle core emphasis
+          if (targetSubObj) {
+            gsap.fromTo(targetSubObj.innerCore.scale,
+              { x: 1.0, y: 1.0, z: 1.0 },
+              { x: 1.18, y: 1.18, z: 1.18, duration: 0.35, ease: "power2.out", yoyo: true, repeat: 1, overwrite: "auto" }
+            );
+
+            if (targetSubObj.shockwaveRing) {
+              targetSubObj.shockwaveRing.scale.set(0.4, 0.4, 0.4);
+              targetSubObj.shockwaveRing.material.opacity = 0.5;
+              gsap.to(targetSubObj.shockwaveRing.scale, {
+                x: 2.2,
+                y: 2.2,
+                z: 2.2,
+                duration: 0.75,
+                ease: "power2.out",
+                overwrite: "auto"
+              });
+              gsap.to(targetSubObj.shockwaveRing.material, {
+                opacity: 0,
+                duration: 0.75,
+                ease: "power2.out",
+                overwrite: "auto"
+              });
+            }
+          }
+
+          // Smooth reticle settle (no jitter)
+          reticleGlitch.active = false;
+          reticleGlitch.scale = 1.15;
+          gsap.to(reticleGlitch, {
+            scale: 1.0,
+            duration: 0.45,
+            ease: "power2.out",
+            overwrite: "auto"
+          });
+
+          soundFX.playCadBeep(2600);
+
+          const activeTabBox = subjectBoxesGrid.querySelector(`.liquid-subject-box[data-topic-index="${topicIndex}"]`)
+            || subjectBoxesGrid.children[topicIndex];
+          if (activeTabBox) {
+            activeTabBox.classList.remove('diving-pulse');
+            const cueSpan = activeTabBox.querySelector('.subj-box-cue span:last-child');
+            if (cueSpan) cueSpan.innerText = '● ACTIVE CORE';
+          }
+
+          transitionStatusText.innerText = 'TOPIC 0' + (topicIndex + 1) + ' ACTIVE // ' + currentSubject.name.toUpperCase();
+          transitionStatusPill.style.borderColor = 'var(--cyan-laser)';
+          transitionStatusPill.style.color = 'var(--cyan-laser)';
+
+          // Smoothly glide Header Bar and Subject Boxes back into view
+          if (liquidHeaderBar) {
+            gsap.to(liquidHeaderBar, {
+              opacity: 1,
+              y: 0,
+              duration: 0.42,
+              ease: "power2.out",
+              pointerEvents: "auto",
+              overwrite: "auto"
+            });
+          }
+
+          if (subjectBoxesContainer) {
+            gsap.to(subjectBoxesContainer, {
+              opacity: 1,
+              y: 0,
+              duration: 0.42,
+              delay: 0.04,
+              ease: "power2.out",
+              pointerEvents: "auto",
+              overwrite: "auto"
+            });
+          }
+
+          // Render New Subject's Bullet Points on Solid Clean Panel
+          renderBulletPoints(currentSubject);
+
+          liquidBulletPanel.style.display = 'flex';
+          gsap.fromTo(liquidBulletPanel,
+            { opacity: 0, y: 18, scale: 0.98 },
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1.0,
+              duration: 0.45,
+              delay: 0.08,
+              ease: "power2.out",
+              pointerEvents: "auto",
+              overwrite: "auto",
+              onComplete: () => {
+                isTransitioning = false;
+              }
+            }
+          );
+
+          // Stagger the point items inside notesContentContainer
+          const noteCards = notesContentContainer.querySelectorAll('.note-card');
+          if (noteCards.length) {
+            gsap.fromTo(noteCards,
+              { opacity: 0, y: 8 },
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.3,
+                stagger: 0.06,
+                ease: "power2.out",
+                overwrite: "auto"
+              }
+            );
+          }
+        });
+      }
+
+      // Backward compatibility alias
+      const transitionToSubject = diveIntoNode;
+
+      function openModuleDetail(index, initialSubIdx = 0) {
+        if (index < 0 || index >= MODULE_DATA.length) return;
+        const mod = MODULE_DATA[index];
+        activeModuleIndex = index;
+        activeSubjectIndex = Math.max(0, Math.min(initialSubIdx, mod.subjects.length - 1));
+        topicModuleIndices = [index, index, index, index];
+        appState = 'MODULE_DETAIL';
+        isTransitioning = true;
+        soundFX.unlock();
+        soundFX.playServoWhoosh();
+        soundFX.playOpticLatch(2400);
+        soundFX.playDataLoadChirp(1800);
+
+        gsap.fromTo(introAnimState,
+          { masterGridPulse: 0.6 },
+          { masterGridPulse: 0.0, duration: 1.0, ease: "power2.out" }
+        );
+
+        modalModuleTag.innerText = mod.tag;
+        modalHeading.innerText = mod.title;
+        modalPageCounter.innerText = `MODULE 0${mod.id + 1} / 05`;
+
+        // Update Mindmap Breadcrumb
+        if (breadcrumbModule) {
+          breadcrumbModule.innerText = mod.tag.split(' ')[0];
+        }
+        if (breadcrumbDepthBadge) {
+          breadcrumbDepthBadge.innerText = 'DEPTH: LEVEL 0' + (activeSubjectIndex + 1);
+        }
+
+        // Render the separate subject boxes
+        renderSubjectBoxes();
+
+        // Hide UI overlays initially during entry transition so initial camera dive is also 100% clean
+        if (liquidHeaderBar) {
+          liquidHeaderBar.style.opacity = '0';
+          liquidHeaderBar.style.transform = 'translateY(-24px)';
+          liquidHeaderBar.style.pointerEvents = 'none';
+        }
+        if (subjectBoxesContainer) {
+          subjectBoxesContainer.style.opacity = '0';
+          subjectBoxesContainer.style.transform = 'translateY(-20px)';
+          subjectBoxesContainer.style.pointerEvents = 'none';
+        }
+        liquidBulletPanel.style.display = 'none';
+        liquidBulletPanel.style.opacity = '0';
+
+        // Show Liquid Glass Module Layer
+        blueprintMasterLayer.classList.remove('active');
+        moduleDetailModal.classList.add('active');
+
+        // Immediately execute synchronized 3D dive into active topic node!
+        diveIntoNode(activeSubjectIndex);
+      }
+
+      // Dismiss / Hide points button to view 3D canvas unobstructed
+      dismissBulletBtn.addEventListener('click', () => {
+        if (isTransitioning) return;
+        soundFX.unlock();
+        soundFX.playOpticLatch(2100);
+
+        gsap.to(liquidBulletPanel, {
+          opacity: 0,
+          y: 12,
+          scale: 0.98,
+          duration: 0.25,
+          ease: "power2.in",
+          overwrite: "auto",
+          onComplete: () => {
+            liquidBulletPanel.style.display = 'none';
+            transitionStatusText.innerText = 'POINTS HIDDEN // TAP ANY TOPIC TO VIEW';
+            transitionStatusPill.style.borderColor = 'rgba(0, 240, 255, 0.3)';
+            transitionStatusPill.style.color = 'rgba(140, 220, 255, 0.8)';
+          }
+        });
+      });
+
+      moduleBoxes.forEach(box => {
+        box.addEventListener('mouseenter', () => soundFX.playHoverChirp(1320));
+        box.addEventListener('click', () => {
+          soundFX.unlock();
+          soundFX.playServoWhoosh();
+          soundFX.playOpticLatch(2600);
+          const modIdx = parseInt(box.getAttribute('data-module'), 10);
+          openModuleDetail(modIdx);
+        });
+      });
+
+      closeModalBtn.addEventListener('click', () => {
+        soundFX.unlock();
+        soundFX.playServoWhoosh();
+        soundFX.playOpticLatch(1900);
+        appState = 'MASTER_BLUEPRINT';
+        isTransitioning = false;
+
+        gsap.fromTo(introAnimState,
+          { masterGridPulse: 0.8 },
+          { masterGridPulse: 0.0, duration: 1.2, ease: "power2.out" }
+        );
+
+        if (diveDelayedCall) diveDelayedCall.kill();
+
+        // Reset any expanded sub-node lattices
+        if (mindmapSubNodes) {
+          mindmapSubNodes.forEach(subList => {
+            subList.forEach(subObj => {
+              if (subObj.outerLattice) subObj.outerLattice.scale.set(1, 1, 1);
+              if (subObj.concentricRing1) subObj.concentricRing1.position.z = 0;
+              if (subObj.concentricRing2) subObj.concentricRing2.position.z = 0;
+              if (subObj.innerCore) subObj.innerCore.scale.set(1, 1, 1);
+            });
+          });
+        }
+
+        // Hide bullet points immediately & reset overlay states
+        liquidBulletPanel.style.display = 'none';
+        liquidBulletPanel.style.opacity = '0';
+        if (liquidHeaderBar) {
+          gsap.killTweensOf(liquidHeaderBar);
+          liquidHeaderBar.style.opacity = '1';
+          liquidHeaderBar.style.transform = 'none';
+          liquidHeaderBar.style.pointerEvents = 'auto';
+        }
+        if (subjectBoxesContainer) {
+          gsap.killTweensOf(subjectBoxesContainer);
+          subjectBoxesContainer.style.opacity = '1';
+          subjectBoxesContainer.style.transform = 'none';
+          subjectBoxesContainer.style.pointerEvents = 'auto';
+        }
+
+        // Reset FOV
+        gsap.to(camera, { fov: 45, duration: 0.5, overwrite: "auto", onUpdate: () => camera.updateProjectionMatrix() });
+
+        moduleDetailModal.classList.remove('active');
+        blueprintMasterLayer.classList.add('active');
+
+        // Camera flies back to panoramic Master Blueprint view
+        gsap.to(camera.position, {
+          x: 0,
+          y: 80,
+          z: 620,
+          duration: 1.5,
+          ease: "power3.inOut",
+          overwrite: "auto"
+        });
+
+        gsap.to(camLookAtTarget, {
+          z: 620,
+          duration: 1.5,
+          ease: "power3.inOut",
+          overwrite: "auto"
+        });
+
+        gsap.to(camLookAtTarget, {
+          x: 0,
+          y: 0,
+          z: 0,
+          duration: 1.5,
+          ease: "power3.inOut",
+          overwrite: "auto"
+        });
+      });
+
+      prevModuleBtn.addEventListener('mouseenter', () => soundFX.playHoverChirp(1400));
+      prevModuleBtn.addEventListener('click', () => {
+        if (isTransitioning) return;
+        soundFX.unlock();
+        soundFX.playOpticLatch(2200);
+
+        // Advance ONLY the currently highlighted topic box through the 5 stages/modules
+        topicModuleIndices[activeSubjectIndex] = (topicModuleIndices[activeSubjectIndex] - 1 + MODULE_DATA.length) % MODULE_DATA.length;
+        updateSubjectBox(activeSubjectIndex);
+
+        diveIntoNode(activeSubjectIndex);
+      });
+
+      nextModuleBtn.addEventListener('mouseenter', () => soundFX.playHoverChirp(1400));
+      nextModuleBtn.addEventListener('click', () => {
+        if (isTransitioning) return;
+        soundFX.unlock();
+        soundFX.playOpticLatch(2200);
+
+        // Advance ONLY the currently highlighted topic box through the 5 stages/modules
+        topicModuleIndices[activeSubjectIndex] = (topicModuleIndices[activeSubjectIndex] + 1) % MODULE_DATA.length;
+        updateSubjectBox(activeSubjectIndex);
+
+        diveIntoNode(activeSubjectIndex);
+      });
+
+      // Hover chirps on persistent interactive buttons and nodes
+      document.querySelectorAll('.top-btn, #viewBlueprintBtn, #backToIntroBtn, #replayIntroBtn, #closeModalBtn, #dismissBulletBtn').forEach(btn => {
+        btn.addEventListener('mouseenter', () => soundFX.playHoverChirp(1420));
+      });
+
+      /* --------------------------------------------------------------------------
+         FULLSCREEN API
+         -------------------------------------------------------------------------- */
+      function isFullscreen() {
+        return !!(document.fullscreenElement || document.webkitFullscreenElement);
+      }
+
+      function toggleFullscreen() {
+        if (!isFullscreen()) {
+          if (viewport.requestFullscreen) {
+            viewport.requestFullscreen().catch(err => console.log(err));
+          } else if (viewport.webkitRequestFullscreen) {
+            viewport.webkitRequestFullscreen();
+          }
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen().catch(err => console.log(err));
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          }
+        }
+      }
+
+      fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+      window.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        if (e.key === 'f' || e.key === 'F') {
+          toggleFullscreen();
+        } else if (e.key === 'Escape' && appState === 'MODULE_DETAIL') {
+          closeModalBtn.click();
+        } else if (e.key === 'ArrowRight' && appState === 'MODULE_DETAIL') {
+          nextModuleBtn.click();
+        } else if (e.key === 'ArrowLeft' && appState === 'MODULE_DETAIL') {
+          prevModuleBtn.click();
+        } else if (appState === 'MODULE_DETAIL' && ['1', '2', '3', '4'].includes(e.key)) {
+          diveIntoNode(parseInt(e.key, 10) - 1);
+        }
+      });
+
+      function updateFullscreenUI() {
+        setTimeout(resizeCanvases, 100);
+      }
+      document.addEventListener('fullscreenchange', updateFullscreenUI);
+      document.addEventListener('webkitfullscreenchange', updateFullscreenUI);
+
+      /* --------------------------------------------------------------------------
+         MOUSE PARALLAX
+         -------------------------------------------------------------------------- */
+      let mouseX = 0, mouseY = 0;
+      let targetMouseX = 0, targetMouseY = 0;
+
+      viewport.addEventListener('mousemove', (e) => {
+        const rect = viewport.getBoundingClientRect();
+        targetMouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+        targetMouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+      });
+
+      viewport.addEventListener('mouseleave', () => {
+        targetMouseX = 0;
+        targetMouseY = 0;
+      });
+
+      /* --------------------------------------------------------------------------
+         MAIN 60 FPS RENDER LOOP
+         -------------------------------------------------------------------------- */
+      let clock = new THREE.Clock();
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+        const delta = clock.getDelta();
+
+        mouseX += (targetMouseX - mouseX) * 0.06;
+        mouseY += (targetMouseY - mouseY) * 0.06;
+
+        // Rotate 3D Intro Core (Calm and steady)
+        if (coreGroup) {
+          coreGroup.rotation.y += delta * 0.12;
+          coreGroup.rotation.x += delta * 0.06;
+        }
+
+        if (gimbalRingsGroup) {
+          gimbalRingsGroup.rotation.z += delta * 0.08;
+        }
+
+        // Rotate spatial modules slowly
+        if (spatialModulesGroup) {
+          spatialModulesGroup.children.forEach((child, idx) => {
+            if (child.isLineSegments) {
+              child.rotation.y += delta * 0.06;
+              child.rotation.x += delta * 0.03;
+            }
+          });
+        }
+
+        // Slow, elegant rotation for the spinning circles with the yellow ball in the middle
+        if (mindmapSubNodes && mindmapSubNodes.length) {
+          mindmapSubNodes.forEach((subList) => {
+            subList.forEach((subObj) => {
+              if (subObj.outerLattice) {
+                subObj.outerLattice.rotation.y += delta * 0.05;
+                subObj.outerLattice.rotation.x += delta * 0.025;
+              }
+              if (subObj.concentricRing1) {
+                subObj.concentricRing1.rotation.z += delta * 0.07;
+              }
+              if (subObj.concentricRing2) {
+                subObj.concentricRing2.rotation.z -= delta * 0.05;
+              }
+              if (subObj.innerCore) {
+                subObj.innerCore.rotation.y -= delta * 0.08;
+                subObj.innerCore.rotation.x += delta * 0.035;
+              }
+            });
+          });
+        }
+
+        // Float & Warp particles
+        if (globalParticles) {
+          const currentWarp = introAnimState.warpSpeed || 1.0;
+          globalParticles.rotation.y += delta * 0.02 * currentWarp;
+          const pos = globalParticles.geometry.attributes.position.array;
+          const speed = currentWarp * delta * 75;
+          for (let i = 2; i < pos.length; i += 3) {
+            pos[i] += speed;
+            if (pos[i] > 700) pos[i] = -900;
+          }
+          globalParticles.geometry.attributes.position.needsUpdate = true;
+        }
+
+        // Update Continuous Ambient Perspective Grid Tunnel
+        if (perspectiveGridTunnel) {
+          const currentWarp = introAnimState.warpSpeed || 1.0;
+          perspectiveGridTunnel.update(delta * currentWarp);
+        }
+
+        // Parallax LookAt
+        camera.lookAt(
+          camLookAtTarget.x + mouseX * 22,
+          camLookAtTarget.y - mouseY * 16,
+          camLookAtTarget.z
+        );
+
+        if (renderer && scene && camera) {
+          renderer.render(scene, camera);
+        }
+
+        renderHUD();
+
+        // Update Calibration Progress Bar & Tickers in Real Time
+        if (calProgressBar && calPercentVal && introCalibrationHud && !introCalibrationHud.classList.contains('hidden')) {
+          const pct = Math.min(100, Math.max(0, Math.round(introAnimState.calProgress)));
+          calProgressBar.style.width = `${pct}%`;
+          calPercentVal.innerText = `${pct}%`;
+        }
+
+        // Update Coordinate Tickers
+        if (rotXVal) rotXVal.innerText = `${(coreGroup.rotation.x * (180 / Math.PI) % 360).toFixed(1)}°`;
+        if (rotYVal) rotYVal.innerText = `${(coreGroup.rotation.y * (180 / Math.PI) % 360).toFixed(1)}°`;
+        if (rotZVal) rotZVal.innerText = `${(gimbalRingsGroup.rotation.z * (180 / Math.PI) % 360).toFixed(1)}°`;
+        if (camZVal) camZVal.innerText = camera.position.z.toFixed(1);
+        if (pitchVal) pitchVal.innerText = `${(-mouseY * 12).toFixed(2)}°`;
+      }
+
+      /* --------------------------------------------------------------------------
+         INITIALIZATION
+         -------------------------------------------------------------------------- */
+      window.addEventListener('DOMContentLoaded', () => {
+        soundFX.init();
+        initThreeScene();
+        resizeCanvases();
+        runIntroSequence();
+        animate();
+      });
+
+      window.addEventListener('load', () => {
+        soundFX.init();
+      });
+
+    })();
+  </script>
+</body>
+</html>
