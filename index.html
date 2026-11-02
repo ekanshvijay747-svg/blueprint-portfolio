@@ -610,11 +610,11 @@
       letter-spacing: 0.14em;
     }
 
-    /* 5 Interactive Broad Event Blueprint Boxes Grid */
+    /* 6 Interactive Broad Event Blueprint Boxes Grid (2 rows x 3 columns) */
     .blueprint-boxes-grid {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 14px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
       margin: auto 0;
       width: 100%;
     }
@@ -1178,6 +1178,28 @@
       transform: translateX(3px);
     }
 
+    .note-paragraph {
+      background: #092036;
+      border: 1px solid rgba(0, 240, 255, 0.18);
+      border-left: 3.5px solid var(--cyan-laser);
+      border-radius: 8px;
+      padding: 16px 18px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      line-height: 1.68;
+      color: #d6eaff;
+      letter-spacing: 0.02em;
+      transition: all 0.2s ease;
+    }
+
+    .note-paragraph:hover {
+      background: #0d2945;
+      border-color: rgba(0, 240, 255, 0.4);
+      border-left-color: var(--amber-warm);
+      transform: translateX(3px);
+    }
+
     .note-header {
       display: flex;
       align-items: center;
@@ -1429,6 +1451,21 @@
               <span class="box-arrow">&rarr;</span>
             </div>
           </div>
+
+          <!-- Box 6: Synthesis & Executive Summary -->
+          <div class="blueprint-module-box" data-module="5">
+            <div class="box-code">
+              <span>[SEC-06] SYNTHESIS</span>
+              <span class="box-num">06</span>
+            </div>
+            <div class="box-title">EXECUTIVE SUMMARY</div>
+            <div class="box-summary">Synthesis tying together goal-driven focus, robotics, math contests, and the engineering behind this 3D CAD schematic.</div>
+            <div class="box-metric">INTEGRATION: FULL SCHEMATIC</div>
+            <div class="box-cta">
+              <span>INSPECT MODULE</span>
+              <span class="box-arrow">&rarr;</span>
+            </div>
+          </div>
         </div>
 
         <!-- Master Footer -->
@@ -1457,7 +1494,7 @@
               <button class="liquid-btn" id="prevModuleBtn" title="Previous Module">
                 <span>&larr; PREV</span>
               </button>
-              <span class="liquid-counter" id="modalPageCounter">MODULE 01 / 05</span>
+              <span class="liquid-counter" id="modalPageCounter">MODULE 01 / 06</span>
               <button class="liquid-btn" id="nextModuleBtn" title="Next Module">
                 <span>NEXT &rarr;</span>
               </button>
@@ -1829,6 +1866,36 @@
           ],
           cameraPos: { x: 80, y: -35, z: 160 },
           lookAt: { x: 165, y: -40, z: -100 }
+        },
+        {
+          id: 5,
+          tag: "[SEC-06] SYNTHESIS",
+          title: "EXECUTIVE SUMMARY",
+          subheading: "Artifact Connection, Core Identity & Future Vector",
+          subjects: [
+            {
+              id: "synthesis_overview",
+              name: "Artifact & Personality Synthesis",
+              paragraphText: "This interactive 3D CAD blueprint embodies my core identity as an engineer, problem solver, and communicator. My goal-driven mindset is grounded in the rigorous logic of competitive math contests, where abstract principles demand persistence and structured proof. In robotics, I translate that analytical discipline into the physical realm, engineering autonomous mechanisms through iterative testing, circuit design, and code. However, technical execution represents only half of the equation; true impact requires conveying complex technical concepts with clarity and presence. Constructing this procedural WebGL schematic artifact demonstrates my deliberate ambition to bridge intricate systems architecture with engaging visual presentation. By architecting custom shaders, real-time spatial mindmaps, and procedural audio from first principles, I transform technical data into an intuitive interactive experience. It reflects my continuous drive to approach demanding frontiers with relentless work ethic and unscripted confidence, turning rigorous analytical engineering into compelling, accessible solutions for real-world impact."
+            },
+            {
+              id: "robotics_math",
+              name: "Robotics & Math Foundations",
+              paragraphText: "My technical pursuits in robotics and competitive mathematics serve as the dual pillars of my analytical foundation. Math Olympiads trained me to dissect abstract constraints under strict time limits, cultivating a mindset that refuses to abandon complex problems until a sound solution is proven. In robotics engineering, that mathematical rigor is transformed into tangible hardware and physical automation. From wiring microcontrollers and tuning kinematics to writing low-latency control algorithms, robotics bridges mathematical theory with real-world physical constraints. This portfolio's 3D coordinate system and mathematical wireframe lattices directly mirror that fusion of spatial mechanics and computational precision."
+            },
+            {
+              id: "engineering_presentation",
+              name: "Engineering to Presentation",
+              paragraphText: "Throughout my leadership in school and Air Cadets, I recognized that even the most sophisticated engineering remains incomplete if it cannot inspire or inform an audience. Overcoming natural introversion and self-doubt taught me to embrace public presentation without relying on rigid scripts. Building this digital blueprint artifact was a deliberate creative challenge to communicate technical depth dynamically. Rather than presenting static bullet points or plain documentation, I engineered an engaging interactive experience that invites the viewer directly into the schematic architecture, demonstrating how technical mastery and authentic presentation amplify one another."
+            },
+            {
+              id: "forward_vision",
+              name: "Future Vector & Core Drive",
+              paragraphText: "Looking forward, the disciplines honed across PDP academics, high-commitment extracurriculars, and software development establish my future vector. The deliberate choice to engineer this portfolio using pure WebGL shaders, Three.js, and synthesized Web Audio represents my refusal to take shortcuts when building something meaningful. It captures my core philosophy: approaching intimidating frontiers proactively, maintaining disciplined execution across competing priorities, and continuously converting rigorous engineering curiosity into functional tools that solve genuine problems."
+            }
+          ],
+          cameraPos: { x: 0, y: -70, z: 155 },
+          lookAt: { x: 0, y: -90, z: -110 }
         }
       ];
 
@@ -2769,6 +2836,12 @@
         m4Mesh.position.set(150, -40, -100);
         m4Mesh.rotation.x = Math.PI / 3;
         spatialModulesGroup.add(m4Mesh);
+
+        // Node 5: Synthesis Core Polyhedron (0, -90, -110)
+        const m5Geo = new THREE.DodecahedronGeometry(42, 0);
+        const m5Mesh = new THREE.LineSegments(new THREE.EdgesGeometry(m5Geo), new THREE.LineBasicMaterial({ color: 0x00f0ff }));
+        m5Mesh.position.set(0, -90, -110);
+        spatialModulesGroup.add(m5Mesh);
 
         /* ATTACH 4 3D MINDMAP SUB-NODES & BRANCH CONNECTORS TO EACH MODULE */
         mindmapSubNodes = [];
@@ -3810,22 +3883,35 @@
         if (!currentSubject) return;
         if (bulletActiveIcon) bulletActiveIcon.innerText = '';
         bulletActiveSubjectTitle.innerText = currentSubject.name.toUpperCase();
-        bulletCountBadge.innerText = `${currentSubject.points.length} POINTS`;
 
         notesContentContainer.innerHTML = '';
-        currentSubject.points.forEach((pt) => {
-          const card = document.createElement('div');
-          card.className = 'note-card';
-          card.innerHTML = `
-            <div class="note-header">
-              <span class="note-bullet">▸</span>
-              <span class="note-title">${pt.title}</span>
-            </div>
-            <div class="note-desc">${pt.desc}</div>
-          `;
-          card.addEventListener('mouseenter', () => soundFX.playHoverChirp(1550));
-          notesContentContainer.appendChild(card);
-        });
+
+        if (currentSubject.paragraphText) {
+          bulletCountBadge.innerText = 'SYNTHESIS';
+          const pCard = document.createElement('div');
+          pCard.className = 'note-paragraph';
+          pCard.innerText = currentSubject.paragraphText;
+          pCard.addEventListener('mouseenter', () => soundFX.playHoverChirp(1550));
+          notesContentContainer.appendChild(pCard);
+          return;
+        }
+
+        bulletCountBadge.innerText = `${currentSubject.points ? currentSubject.points.length : 0} POINTS`;
+        if (currentSubject.points) {
+          currentSubject.points.forEach((pt) => {
+            const card = document.createElement('div');
+            card.className = 'note-card';
+            card.innerHTML = `
+              <div class="note-header">
+                <span class="note-bullet">▸</span>
+                <span class="note-title">${pt.title}</span>
+              </div>
+              <div class="note-desc">${pt.desc}</div>
+            `;
+            card.addEventListener('mouseenter', () => soundFX.playHoverChirp(1550));
+            notesContentContainer.appendChild(card);
+          });
+        }
       }
 
       function updateSubjectBox(idx) {
@@ -3848,7 +3934,7 @@
         }
 
         const cuePoints = box.querySelector('.subj-box-cue span:first-child');
-        if (cuePoints) cuePoints.innerText = `${subj.points.length} POINTS`;
+        if (cuePoints) cuePoints.innerText = subj.paragraphText ? "SYNTHESIS" : `${subj.points ? subj.points.length : 0} POINTS`;
 
         const pips = box.querySelectorAll('.depth-pip');
         pips.forEach((pip, pIdx) => {
@@ -3872,17 +3958,18 @@
                 <span class="subj-box-code">[TOPIC 0${idx + 1}]</span>
                 <span class="subj-box-stage" style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--gold-amber); opacity: 0.85;">SEC 0${mIdx + 1}</span>
               </div>
-              <div class="depth-pip-meter" title="Stage 0${mIdx + 1} of 05">
+              <div class="depth-pip-meter" title="Stage 0${mIdx + 1} of 06">
                 <span class="depth-pip ${mIdx >= 0 ? 'active' : ''}"></span>
                 <span class="depth-pip ${mIdx >= 1 ? 'active' : ''}"></span>
                 <span class="depth-pip ${mIdx >= 2 ? 'active' : ''}"></span>
                 <span class="depth-pip ${mIdx >= 3 ? 'active' : ''}"></span>
                 <span class="depth-pip ${mIdx >= 4 ? 'active' : ''}"></span>
+                <span class="depth-pip ${mIdx >= 5 ? 'active' : ''}"></span>
               </div>
             </div>
             <div class="subj-box-title">${subj.name}</div>
             <div class="subj-box-cue">
-              <span>${subj.points.length} POINTS</span>
+              <span>${subj.paragraphText ? "SYNTHESIS" : (subj.points ? `${subj.points.length} POINTS` : "0 POINTS")}</span>
               <span>${idx === activeSubjectIndex ? '● ACTIVE CORE' : 'DIVE DEEPER →'}</span>
             </div>
           `;
@@ -3925,7 +4012,7 @@
         // Sync header indicators to match this highlighted topic's current stage
         modalModuleTag.innerText = mod.tag;
         modalHeading.innerText = mod.title;
-        modalPageCounter.innerText = `MODULE 0${activeModuleIndex + 1} / 05`;
+        modalPageCounter.innerText = `MODULE 0${activeModuleIndex + 1} / 06`;
         if (breadcrumbModule) {
           breadcrumbModule.innerText = mod.tag.split(' ')[0];
         }
@@ -4234,7 +4321,7 @@
 
         modalModuleTag.innerText = mod.tag;
         modalHeading.innerText = mod.title;
-        modalPageCounter.innerText = `MODULE 0${mod.id + 1} / 05`;
+        modalPageCounter.innerText = `MODULE 0${mod.id + 1} / 06`;
 
         // Update Mindmap Breadcrumb
         if (breadcrumbModule) {
